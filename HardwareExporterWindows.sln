@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareExporterWindows", "src\HardwareExporterWindows\HardwareExporterWindows.csproj", "{0DD31303-C809-439C-BBC0-C04D90165FAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareExporterWindows.Tests", "test\HardwareExporterWindows.Tests\HardwareExporterWindows.Tests.csproj", "{504BA309-89FE-4F07-9502-96A2836FC007}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DD31303-C809-439C-BBC0-C04D90165FAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DD31303-C809-439C-BBC0-C04D90165FAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DD31303-C809-439C-BBC0-C04D90165FAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DD31303-C809-439C-BBC0-C04D90165FAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{504BA309-89FE-4F07-9502-96A2836FC007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{504BA309-89FE-4F07-9502-96A2836FC007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{504BA309-89FE-4F07-9502-96A2836FC007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{504BA309-89FE-4F07-9502-96A2836FC007}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
