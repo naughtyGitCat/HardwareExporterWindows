@@ -28,17 +28,23 @@ namespace HardwareExporterWindows
             {
                 var prefix = $"{hardware.HardwareType.ToString().ToLower()}";
                 var labels = new Dictionary<string, string>() { { "name", $"{hardware.Name}" } };
-                // Console.WriteLine("prefix: {0}, label: {1}", prefix, JsonConvert.SerializeObject(labels));
+                Console.WriteLine("prefix: {0}, label: {1}", prefix, JsonConvert.SerializeObject(labels));
+
+                if (prefix.StartsWith("hardware_gpu"))
+                {
+                    labels["vendor"] = prefix.Split("hardware_gpu")[1];
+                    prefix = "hardware_gpu";
+                }
 
                 foreach (var subhardware in hardware.SubHardware)
                 {
                     var subPrefix = $"{prefix}_{subhardware.HardwareType}";
                     var subLabels = labels.Append(new KeyValuePair<string, string>("sub_name", subhardware.Name)).ToImmutableDictionary();
-                    Console.WriteLine("\tprefix: {0}, label: {1}", subPrefix, subLabels);
+                    Console.WriteLine("\tprefix: {0}, label: {1}", subPrefix, JsonConvert.SerializeObject(subLabels));
 
                     foreach (var sensor in subhardware.Sensors)
                     {
-                        Console.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
+                        Console.WriteLine("\t\tSensor: {0}, value: {1}, type: {2}", sensor.Name, sensor.Value, sensor.SensorType);
                     }
                 }
 
@@ -48,8 +54,10 @@ namespace HardwareExporterWindows
                     // var gauge = Metrics
                     var sensorLabels = labels.Append(new("type", sensor.SensorType.ToString())).ToImmutableDictionary();
                     //Console.WriteLine("\tmetric: {0}_{1}_{2}, value: {3}", prefix, sensor.SensorType.ToString().ToLower(), sensor.Name.ToLower(), sensor.Value);
-                    Console.WriteLine("\tmetric: {0}_{1}, value: {2}, label: {3}", prefix, sensor.Name.Replace(" ", "_").ToLower(), sensor.Value, JsonConvert.SerializeObject(sensorLabels));
+                    Console.WriteLine("\tmetric: {0}_{1}_{2}, value: {3}, label: {4}", prefix,sensor.SensorType, sensor.Name.Replace(" ", "_").ToLower(), sensor.Value, JsonConvert.SerializeObject(sensorLabels));
                 }
+
+                if (hardware.HardwareType == HardwareType.Motherboard) break;
             }
 
             computer.Close();
