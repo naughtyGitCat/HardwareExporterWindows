@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 using Prometheus;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -32,28 +31,56 @@ public class UpdateVisitor : IVisitor
 [Route("api/[controller]")]
 public class XController : ControllerBase
 {
-    private Tuple<string,IDictionary<string, string>> Process(string metricName, IDictionary<string, string> labels) 
+    private string TrimDuplicateElments(string metricName)
     {
+        var rawElements = metricName.Split("_");
+        var newElements = new List<string>();
+        for (int i = 0; i < rawElements.Length; i++)
+        {
+            if (i == 0)
+            {
+                newElements.Add(rawElements[i]);
+            }
+            else
+            {
+                if (rawElements[i] != rawElements[i - 1])
+                {
+                    newElements.Add(rawElements[i]);
+                }
+            }
+        }
+        return string.Join("_", newElements);
+    }
+    private (string,IDictionary<string, string>) Process(string metricName) 
+    {
+        var sensorLabels = new Dictionary<string, string>();
         var pattern = @"\s#?\d";
         var c = Regex.Count(metricName, pattern);
         if (c == 0)
         {
-            return Tuple.Create(metricName, labels);
+            return (metricName.Replace(" ", "_"), sensorLabels);
         }
-        Console.WriteLine($"metric: {metricName}, c: {c}");
+        
 
         var elements = metricName.Split(" ");
-        var numPattern = @"\d+";
+        var newMetricElements = new List<string> { };
         for (int i = 0;i< elements.Length; i++)
         {
-            var re = Regex.Match(elements[i], numPattern);
-            if (re.Success)
+            // Console.WriteLine($"element: {elements[i]}");
+            var re = Regex.Match(elements[i], @"\d+");
+            if (Regex.Match(elements[i], @"#?\d+$").Success && re.Success)
             {
-                elements.
-                labels[elements[i - 1]] = re.Value;
-            }                         
+                // Console.WriteLine("number triggered");
+                sensorLabels[elements[i - 1]] = re.Value;
+            }
+            else
+            {
+                newMetricElements.Add(elements[i]);
+            }
         }
-        return new Tuple<string, IDictionary<string, string>>(metricName, labels);
+        var newMetricName = string.Join("_", newMetricElements);
+        Console.WriteLine($"in Process, metric: {newMetricName}, labels: {JsonConvert.SerializeObject(sensorLabels)}");
+        return (newMetricName, sensorLabels);
     }
 
     [HttpGet]
@@ -76,42 +103,46 @@ public class XController : ControllerBase
         foreach (var hardware in computer.Hardware)
         {
             var prefix = $"hardware_{hardware.HardwareType.ToString().ToLower()}";
-            var labels = new Dictionary<string, string>() { { "name", $"{hardware.Name}" } };
+            var hardwareLabels = new Dictionary<string, string>() { { "name", $"{hardware.Name}" } };
             if (prefix.StartsWith("hardware_gpu"))
             {
-                labels["vendor"] = prefix.Split("hardware_gpu")[1];
+                hardwareLabels["vendor"] = prefix.Split("hardware_gpu")[1];
                 prefix = "hardware_gpu";
             }
 
             foreach (var subhardware in hardware.SubHardware)
             {
                 var subPrefix = $"{prefix}_{subhardware.HardwareType.ToString().ToLower()}";
-                var subLabels = labels.Append(new KeyValuePair<string, string>("sub_name", subhardware.Name)).ToImmutableDictionary();
-                //  Console.WriteLine("\tprefix: {0}, label: {1}", subPrefix, subLabels);
+                var subHardwareLabels = new Dictionary<string, string>(hardwareLabels.Append(new("sub_name", subhardware.Name)));
+
                 foreach (var sensor in subhardware.Sensors)
                 {
-                    var subMetricName = $"{subPrefix}_{sensor.SensorType.ToString().ToLower()}_{sensor.Name.ToLower()}";
+                    Console.WriteLine($"hardwareLabels: {JsonConvert.SerializeObject(hardwareLabels)}");
+                    Console.WriteLine($"subHardwareLabels: {JsonConvert.SerializeObject(subHardwareLabels)}");
+                    var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
+                    var sensorLabels = subHardwareLabels.ToList().Concat(pureSensorLabels.ToList());
+                    Console.WriteLine($"sensorLabels: {JsonConvert.SerializeObject(sensorLabels)}");
+                    var subMetricName = $"{subPrefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
+                    subMetricName = TrimDuplicateElments(subMetricName);
                     ret += $"# HELP {subMetricName} sensor identifier: {sensor.Identifier}\n";
                     ret += $"# TYPE {subMetricName} gauge\n";
                     var sensorLabelsRendered = string.Empty;
-                    if (subLabels.Any())
+                    if (sensorLabels.Any())
                     {
-                        sensorLabelsRendered = string.Join(", ", subLabels.Select(l => $"{l.Key}=\"{l.Value}\""));
+                        sensorLabelsRendered = string.Join(", ", sensorLabels.Select(l => $"{l.Key}=\"{l.Value}\""));
                         sensorLabelsRendered = $"{{{sensorLabelsRendered}}}";
                     }
                     ret += $"{subMetricName}{sensorLabelsRendered} {sensor.Value}\n";
-                    // Console.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
+             
                 }
             }
 
             foreach (ISensor sensor in hardware.Sensors)
             {
-                
-                // var gauge = Metrics
-                var sensorLabels = labels.Append(new("type", sensor.SensorType.ToString())).ToImmutableDictionary();
-                //Console.WriteLine("\tmetric: {0}_{1}_{2}, value: {3}", prefix, sensor.SensorType.ToString().ToLower(), sensor.Name.ToLower(), sensor.Value);
-                // Console.WriteLine("\tmetric: {0}_{1}, value: {2}, label: {3}", prefix, sensor.Name.Replace(" ", "_").ToLower(), sensor.Value, JsonConvert.SerializeObject(sensorLabels));
-                var metricName = $"{prefix}_{sensor.Name.ToLower()}";
+                var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
+                var sensorLabels = hardwareLabels.ToList().Concat(pureSensorLabels.ToList());
+                var metricName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
+                metricName = TrimDuplicateElments(metricName);
                 ret += $"# HELP {metricName} sensor type: {sensor.SensorType}\n";
                 ret += $"# TYPE {metricName} gauge\n";
                 var sensorLabelsRendered = string.Empty ;
@@ -121,7 +152,7 @@ public class XController : ControllerBase
                     sensorLabelsRendered = $"{{{sensorLabelsRendered}}}";
                 }
                 ret += $"{metricName}{sensorLabelsRendered} {sensor.Value}\n";
-                Process(metricName, sensorLabels);
+                
             }
         }
     
