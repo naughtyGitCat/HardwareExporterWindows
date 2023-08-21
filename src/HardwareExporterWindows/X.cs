@@ -53,6 +53,9 @@ public class XController : ControllerBase
     }
     private (string,IDictionary<string, string>) Process(string metricName) 
     {
+        // +3.3v
+        metricName = metricName.Replace("+", "positive_").Replace("-", "negative_"); 
+
         var sensorLabels = new Dictionary<string, string>();
         var pattern = @"\s#?\d";
         var c = Regex.Count(metricName, pattern);
