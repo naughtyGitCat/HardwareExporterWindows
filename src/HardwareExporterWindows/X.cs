@@ -120,6 +120,10 @@ public class XController : ControllerBase
 
                 foreach (var sensor in subhardware.Sensors)
                 {
+                    if (sensor.Value is null)
+                    {
+                        continue;
+                    }
                     Console.WriteLine($"hardwareLabels: {JsonConvert.SerializeObject(hardwareLabels)}");
                     Console.WriteLine($"subHardwareLabels: {JsonConvert.SerializeObject(subHardwareLabels)}");
                     var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
@@ -142,6 +146,10 @@ public class XController : ControllerBase
 
             foreach (ISensor sensor in hardware.Sensors)
             {
+                if (sensor.Value is null)
+                {
+                    continue;
+                }
                 var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
                 var sensorLabels = hardwareLabels.ToList().Concat(pureSensorLabels.ToList());
                 var metricName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
