@@ -25,7 +25,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Publish
-      run: dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish
+      run: dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/
     - name: Archive
       run: Compress-Archive -Path bin/publish -DestinationPath publish.zip
     - name: Test
