@@ -24,9 +24,22 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: Publish
-      run: dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/
-    - name: Archive
-      run: Compress-Archive -Path bin/publish -DestinationPath publish.zip
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish --no-restore -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/
+    - name: Archive
+      run: Compress-Archive -Path bin/publish -DestinationPath publish.zip
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: publish_file
+        path: publish.zip
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+          $TagName = $env:GITHUB_REF -replace 'refs/tags/', ''
+          Get-ChildItem -Path ./ -Include @('publish.zip') | Foreach-Object {gh release upload $TagName $_}
+          make push-all
