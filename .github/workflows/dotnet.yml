@@ -23,7 +23,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore src/HardwareExporterWindows/HardwareExporterWindows.csproj
+      run: |
+          dotnet build --no-restore src/HardwareExporterWindows/HardwareExporterWindows.csproj
+          dotnet build --no-restore test/HardwareExporterWindows.Tests/HardwareExporterWindows.Tests.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
