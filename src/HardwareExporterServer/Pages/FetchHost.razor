@@ -1,0 +1,59 @@
+@page "/fetchhost"
+@using HardwareExporterServer.Data
+@inject HostInfoManager hostInfoManager
+@inject HttpClient Http
+
+<PageTitle>Windows host list</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (hosts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Host</th>
+            <th>Port</th>
+            <th>CreateTime</th>
+            <th>UpdateTime</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var forecast in hosts)
+        {
+            <tr>
+                <td>@forecast.HostIP</td>
+                <td>@forecast.Port</td>
+                <td>@forecast.CreateTime.ToShortDateString()</td>
+                <td>@forecast.UpdateTime.ToShortDateString()</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<HostInfo>? hosts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hosts = hostInfoManager.GetHostInfos();
+    }
+
+    public class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public string? Summary { get; set; }
+
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
