@@ -30,7 +30,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: |
-          dotnet publish -r win-x  64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/HardwareExporterWindows.csproj
+          dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/HardwareExporterWindows.csproj
           Copy-Item install.ps1 -Destination src/HardwareExporterWindows/bin/publish
     - name: Archive
       run: Compress-Archive -Path bin/publish -DestinationPath publish.zip
