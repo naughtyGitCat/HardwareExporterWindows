@@ -23,11 +23,13 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore -r win-x64
+      run: dotnet build --no-restore src/HardwareExporterWindows/HardwareExporterWindows.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
-      run: dotnet publish --no-restore -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/
+      run: |
+          dotnet publish -r win-x  64 --self-contained -p:PublishSingleFile=true -o bin/publish  src/HardwareExporterWindows/HardwareExporterWindows.csproj
+          cp install.ps1 -o src/HardwareExporterWindows/bin/publish
     - name: Archive
       run: Compress-Archive -Path bin/publish -DestinationPath publish.zip
     - name: Upload Artifacts
