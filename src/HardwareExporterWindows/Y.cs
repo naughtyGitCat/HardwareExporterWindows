@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using Prometheus;
+using HardwareExporterWindows.Controllers;
 
 namespace HardwareExporterWindows
 {

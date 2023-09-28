@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 using Newtonsoft.Json;
 
-using Prometheus;
-using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace HardwareExporterWindows;
+namespace HardwareExporterWindows.Controllers;
 
 
 public class UpdateVisitor : IVisitor
@@ -51,10 +49,10 @@ public class XController : ControllerBase
         }
         return string.Join("_", newElements);
     }
-    private (string,IDictionary<string, string>) Process(string metricName) 
+    private (string, IDictionary<string, string>) Process(string metricName)
     {
         // +3.3v
-        metricName = metricName.Replace("+", "positive_").Replace("-", "negative_"); 
+        metricName = metricName.Replace("+", "positive_").Replace("-", "negative_");
 
         var sensorLabels = new Dictionary<string, string>();
         var pattern = @"\s#?\d";
@@ -63,11 +61,11 @@ public class XController : ControllerBase
         {
             return (metricName.Replace(" ", "_"), sensorLabels);
         }
-        
+
 
         var elements = metricName.Split(" ");
         var newMetricElements = new List<string> { };
-        for (int i = 0;i< elements.Length; i++)
+        for (int i = 0; i < elements.Length; i++)
         {
             // Console.WriteLine($"element: {elements[i]}");
             var re = Regex.Match(elements[i], @"\d+");
@@ -140,7 +138,7 @@ public class XController : ControllerBase
                         sensorLabelsRendered = $"{{{sensorLabelsRendered}}}";
                     }
                     ret += $"{subMetricName}{sensorLabelsRendered} {sensor.Value}\n";
-             
+
                 }
             }
 
@@ -156,17 +154,17 @@ public class XController : ControllerBase
                 metricName = TrimDuplicateElments(metricName);
                 ret += $"# HELP {metricName} sensor type: {sensor.SensorType}\n";
                 ret += $"# TYPE {metricName} gauge\n";
-                var sensorLabelsRendered = string.Empty ;
-                if (sensorLabels.Any()) 
+                var sensorLabelsRendered = string.Empty;
+                if (sensorLabels.Any())
                 {
-                    sensorLabelsRendered = string.Join(", ", sensorLabels.Select(l=>$"{l.Key}=\"{l.Value}\""));
+                    sensorLabelsRendered = string.Join(", ", sensorLabels.Select(l => $"{l.Key}=\"{l.Value}\""));
                     sensorLabelsRendered = $"{{{sensorLabelsRendered}}}";
                 }
                 ret += $"{metricName}{sensorLabelsRendered} {sensor.Value}\n";
-                
+
             }
         }
-    
+
         computer.Close();
         return ret;
     }
