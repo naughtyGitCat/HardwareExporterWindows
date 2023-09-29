@@ -45,7 +45,7 @@ else
 
 Write-Host "now install service"
 # 注册服务
-$exePath = "$TargetPath\HardwareExporterWindows.exe"
+$exePath = "$TargetPath\HardwareExporterWindows"
 New-NetFirewallRule -DisplayName "HardwareExporter" -Direction Inbound -Program $exePath -Action Allow
 if (-not $?) {
 	Write-Host "Add firewall rule failed"
