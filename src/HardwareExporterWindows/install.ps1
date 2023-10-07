@@ -11,7 +11,8 @@ if ( ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]
 # $ScriptPath = $MyInvocation.MyCommand.Path
 $ScriptPath = (Get-Location).path
 # set target path
-$TargetPath = "C:\\Program Files\HardwareExporter"
+# https://stackoverflow.com/questions/20138054/equivalent-of-cd-programfiles-in-powershell
+$TargetPath = "$Env:Programfiles\HardwareExporter"
 
 # create target path
 if (-not (Test-Path $TargetPath))
