@@ -11,7 +11,7 @@ public class HostInfoManager
     public HostInfoManager(ILogger<HostInfoManager> logger)
     {
         _logger = logger;
-        _database = new Database("Data Source=data.db", DatabaseType.SQLite, SQLiteFactory.Instance);
+        _database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         // InitTable();
     }
 
