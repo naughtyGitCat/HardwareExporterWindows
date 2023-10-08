@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareExporterWindows", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareExporterWindows.Tests", "test\HardwareExporterWindows.Tests\HardwareExporterWindows.Tests.csproj", "{504BA309-89FE-4F07-9502-96A2836FC007}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{58CDB3D2-04F7-40DD-A655-64D749D7DE10}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareExporterServer", "src\HardwareExporterServer\HardwareExporterServer.csproj", "{C2B909CD-9A46-43A8-AC7A-331C12BC2D79}"
 EndProject
 Global

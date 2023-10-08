@@ -1,5 +1,5 @@
 // // 张锐志 2023-09-15
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using NPoco;
 namespace HardwareExporterServer.Data;
 
@@ -10,7 +10,7 @@ public class HostInfoManager
     public HostInfoManager(ILogger<HostInfoManager> logger)
     {
         _logger = logger;
-        _database = new Database("./data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        _database = new Database("./data.db", DatabaseType.SQLite, SQLiteFactory.Instance);
     }
 
     public IEnumerable<HostInfo> GetHostInfos()
