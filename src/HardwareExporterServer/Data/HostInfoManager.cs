@@ -12,9 +12,10 @@ public class HostInfoManager
     {
         _logger = logger;
         _database = new Database("Data Source=data.db", DatabaseType.SQLite, SQLiteFactory.Instance);
+        InitTable();
     }
 
-    public void InitTable()
+    private void InitTable()
     {
         const string windowsHostTableDDL = """
 
