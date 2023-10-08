@@ -2,13 +2,14 @@
 using NPoco;
 namespace HardwareExporterServer.Data;
 
-[TableName("host_info")]
+[TableName("HostInfo")]
 [PrimaryKey("id")]
 public class HostInfo
 {
     public int ID { get; set; }
+    public string HostName { get; set; } = string.Empty;
     public string HostIP { get; set; } = string.Empty;
-    public int Port { get; set; }
+    public int ExporterPort { get; set; }
     public DateTime CreateTime { get; set; }
     public DateTime UpdateTime { get; set; }
 }
