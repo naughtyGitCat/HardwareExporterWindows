@@ -12,27 +12,35 @@ public class HostInfoManager
     {
         _logger = logger;
         _database = new Database("Data Source=data.db", DatabaseType.SQLite, SQLiteFactory.Instance);
-        InitTable();
+        // InitTable();
     }
 
     private void InitTable()
     {
-        const string windowsHostTableDDL = """
+        try
+        {
+            const string windowsHostTableDDL = """
 
-                                           CREATE TABLE IF NOT EXISTS host_info(
-                                               ID int primary key,
-                                               HostName TEXT not null default '',
-                                               HostIP TEXT not null default '' UNIQUE,
-                                               ExporterPort INTEGER not null default -1,
-                                               CreateTimestamp INTEGER not null default 0,
-                                               UpdateTimestamp INTEGER not null default 0
-                                           );
-                                           """;
-        _database.Execute(windowsHostTableDDL);
+                                               CREATE TABLE IF NOT EXISTS host_info(
+                                                   ID int primary key,
+                                                   HostName TEXT not null default '',
+                                                   HostIP TEXT not null default '' UNIQUE,
+                                                   ExporterPort INTEGER not null default -1,
+                                                   CreateTimestamp INTEGER not null default 0,
+                                                   UpdateTimestamp INTEGER not null default 0
+                                               );
+                                               """;
+            _database.Execute(windowsHostTableDDL);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("{e}",e);
+        }
     }
 
     public IEnumerable<HostInfo> GetHostInfos()
     {
+        InitTable();
         return _database.Fetch<HostInfo>();
     }
     
