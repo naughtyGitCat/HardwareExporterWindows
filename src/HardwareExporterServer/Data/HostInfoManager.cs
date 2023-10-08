@@ -21,7 +21,7 @@ public class HostInfoManager
         {
             const string windowsHostTableDDL = """
 
-                                               CREATE TABLE IF NOT EXISTS host_info(
+                                               CREATE TABLE IF NOT EXISTS HostInfo(
                                                    ID int primary key,
                                                    HostName TEXT not null default '',
                                                    HostIP TEXT not null default '' UNIQUE,
