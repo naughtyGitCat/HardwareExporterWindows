@@ -25,13 +25,13 @@ else
         </tr>
         </thead>
         <tbody>
-        @foreach (var forecast in hosts)
+        @foreach (var host in hosts)
         {
             <tr>
-                <td>@forecast.HostIP</td>
-                <td>@forecast.Port</td>
-                <td>@forecast.CreateTime.ToShortDateString()</td>
-                <td>@forecast.UpdateTime.ToShortDateString()</td>
+                <td>@host.HostIP</td>
+                <td>@host.Port</td>
+                <td>@host.CreateTime.ToShortDateString()</td>
+                <td>@host.UpdateTime.ToShortDateString()</td>
             </tr>
         }
         </tbody>
@@ -41,19 +41,8 @@ else
 @code {
     private IEnumerable<HostInfo>? hosts;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         hosts = hostInfoManager.GetHostInfos();
-    }
-
-    public class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string? Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
 }
