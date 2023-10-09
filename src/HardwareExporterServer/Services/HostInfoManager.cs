@@ -122,6 +122,7 @@ public class HostInfoManager
             setClause += $" AND ExporterPort = {exporterPort}";
         }
         var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
+        _logger.LogInformation("update sql: {sql}",sql);
         database.Execute(sql);
     }
 
