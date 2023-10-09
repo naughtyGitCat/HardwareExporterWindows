@@ -19,6 +19,6 @@ public record HostInfo
     public string HostName { get; set; } = string.Empty;
     public string HostIP { get; set; } = string.Empty;
     public int ExporterPort { get; set; }
-    public DateTime CreateTime { get; set; }
-    public DateTime UpdateTime { get; set; }
+    public DateTime CreateTime { get; init; } = DateTime.Now;
+    public DateTime UpdateTime { get; init; } = DateTime.Now;
 }
