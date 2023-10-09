@@ -12,7 +12,7 @@ public class HostInfoManager
     {
         _logger = logger;
         _database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
-        // InitTable();
+        InitTable();
     }
 
     private void InitTable()
@@ -40,7 +40,7 @@ public class HostInfoManager
 
     public IEnumerable<HostInfo> GetHostInfos()
     {
-        InitTable();
+        // InitTable();
         return _database.Fetch<HostInfo>();
     }
     
