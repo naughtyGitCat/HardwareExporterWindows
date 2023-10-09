@@ -20,7 +20,7 @@
     <div class="form-group">
         <label>ExporterPort: </label>
         <div>
-            <InputNumber @bind="@hostInfo.ExporterPort"/>
+            <InputNumber TValue="int" @bind="@hostInfo.ExporterPort"/>
             <ValidationMessage For="@(() => hostInfo.ExporterPort)"/>
         </div>
     </div>
