@@ -112,7 +112,7 @@ public class HostInfoManager
     {
         using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         if (hostName is null && exporterPort is null) return;
-        var setClause = $"SET UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
+        var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
         {
             setClause += $" AND HostName = {hostName}";
