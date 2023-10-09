@@ -2,6 +2,7 @@
 using System.Data.SQLite;
 using Microsoft.Data.Sqlite;
 using NPoco;
+using System.IO;
 using HardwareExporterServer.Model;
 namespace HardwareExporterServer.Services;
 
@@ -16,6 +17,7 @@ public class HostInfoManager
     
     private void InitTable()
     {
+        _logger.LogInformation("cwd: {}",Directory.GetCurrentDirectory());
         try
         {
             const string windowsHostTableDDL = """
