@@ -6,21 +6,21 @@
     <div class="form-group">
         <label>Hostname: </label>
         <div>
-            <InputText @bind="@hostInfo.HostName"/>
+            <InputText @bind-Value="@hostInfo.HostName"/>
             <ValidationMessage For="@(() => hostInfo.HostName)"/>
         </div>
     </div>
     <div class="form-group">
         <label>HostIP: </label>
         <div>
-            <InputText @bind="@hostInfo.HostIP"/>
+            <InputText @bind-Value="@hostInfo.HostIP"/>
             <ValidationMessage For="@(() => hostInfo.HostIP)"/>
         </div>
     </div>
     <div class="form-group">
         <label>ExporterPort: </label>
         <div>
-            <InputNumber TValue="int" @bind="@hostInfo.ExporterPort"/>
+            <InputNumber TValue="int" @bind-Value="@hostInfo.ExporterPort"/>
             <ValidationMessage For="@(() => hostInfo.ExporterPort)"/>
         </div>
     </div>
