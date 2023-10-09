@@ -8,14 +8,12 @@ namespace HardwareExporterServer.Services;
 public class HostInfoManager
 {
     private readonly ILogger<HostInfoManager> _logger;
-    private readonly IDatabase _database;
     public HostInfoManager(ILogger<HostInfoManager> logger)
     {
         _logger = logger;
-        _database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         InitTable();
     }
-
+    
     private void InitTable()
     {
         try
@@ -31,7 +29,8 @@ public class HostInfoManager
                                                    UpdateTimestamp INTEGER not null default 0
                                                );
                                                """;
-            _database.Execute(windowsHostTableDDL);
+            using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+            database.Execute(windowsHostTableDDL);
         }
         catch (Exception e)
         {
@@ -41,14 +40,15 @@ public class HostInfoManager
 
     public IEnumerable<HostInfoEntity> GetHostInfoEntities()
     {
-        // InitTable();
-        return _database.Fetch<HostInfoEntity>();
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        return database.Fetch<HostInfoEntity>();
     }
     
     public IEnumerable<HostInfo> GetHostInfos()
     {
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         // InitTable();
-        var entities = _database.Fetch<HostInfoEntity>();
+        var entities = database.Fetch<HostInfoEntity>();
         return entities.Select(e => new HostInfo
         {
             HostIP = e.HostIP,
@@ -61,23 +61,27 @@ public class HostInfoManager
 
     public HostInfo GetHostInfo(string hostIP)
     {
-        return _database.Query<HostInfo>().Where(h => h.HostIP == hostIP).First();
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        return database.Query<HostInfo>().Where(h => h.HostIP == hostIP).First();
     }
     
     public void InsertHostInfo(HostInfoEntity hostInfoEntity)
     {
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         hostInfoEntity.CreateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
         hostInfoEntity.UpdateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
-        _database.Insert(hostInfoEntity);
+        database.Insert(hostInfoEntity);
     }
 
     public void DeleteHostInfo(string hostIP)
     {
-       _database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
     }
 
     public void UpdateHostInfo(string hostIP, string? hostName, int? exporterPort)
     {
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
         if (hostName is null && exporterPort is null) return;
         var setClause = $"SET UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
@@ -89,7 +93,7 @@ public class HostInfoManager
             setClause += $" AND ExporterPort = {exporterPort}";
         }
         var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
-        _database.Execute(sql);
+        database.Execute(sql);
     }
 
 }
