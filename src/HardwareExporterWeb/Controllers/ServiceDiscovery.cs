@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HardwareExporterWeb.Controllers;
 
 
-[Route("/ServiceDiscovery")]
+[Route("/api/[controller]")]
 public class ServiceDiscoveryController : ControllerBase
 {
     private readonly HostInfoManager _hostInfoManager;
