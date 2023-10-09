@@ -1,17 +1,18 @@
 @page "/InsertHost"
-@using HardwareExporterServer.Data
+@using HardwareExporterServer.Model
+@using HardwareExporterServer.Services
 @inject HostInfoManager hostInfoManager
 @inject NavigationManager navigationManager
 <h3>InsertHost</h3>
 
-<Form ButtonText="Insert Host" hostInfo="@_hostInfo" OnValidSubmit="@Insert">
+<Form ButtonText="Insert Host" HostInfoEntity="@_hostInfoEntity" OnValidSubmit="@Insert">
 </Form>
 
 @code {
-    readonly HostInfo _hostInfo = new ();
+    readonly HostInfoEntity _hostInfoEntity = new ();
     void Insert()
     {
-        hostInfoManager.InsertHostInfo(_hostInfo);
+        hostInfoManager.InsertHostInfo(_hostInfoEntity);
         navigationManager.NavigateTo("FetchHost");
     }
 }

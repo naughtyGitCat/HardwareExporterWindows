@@ -1,27 +1,27 @@
-@using HardwareExporterServer.Data
+@using HardwareExporterServer.Model
 <h3>Form</h3>
 
-<EditForm Model="@hostInfo" OnValidSubmit="@OnValidSubmit">
+<EditForm Model="@HostInfoEntity" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator/>
     <div class="form-group">
         <label>Hostname: </label>
         <div>
-            <InputText @bind-Value="@hostInfo.HostName"/>
-            <ValidationMessage For="@(() => hostInfo.HostName)"/>
+            <InputText @bind-Value="@HostInfoEntity.HostName"/>
+            <ValidationMessage For="@(() => HostInfoEntity.HostName)"/>
         </div>
     </div>
     <div class="form-group">
         <label>HostIP: </label>
         <div>
-            <InputText @bind-Value="@hostInfo.HostIP"/>
-            <ValidationMessage For="@(() => hostInfo.HostIP)"/>
+            <InputText @bind-Value="@HostInfoEntity.HostIP"/>
+            <ValidationMessage For="@(() => HostInfoEntity.HostIP)"/>
         </div>
     </div>
     <div class="form-group">
         <label>ExporterPort: </label>
         <div>
-            <InputNumber TValue="int" @bind-Value="@hostInfo.ExporterPort"/>
-            <ValidationMessage For="@(() => hostInfo.ExporterPort)"/>
+            <InputNumber TValue="int" @bind-Value="@HostInfoEntity.ExporterPort"/>
+            <ValidationMessage For="@(() => HostInfoEntity.ExporterPort)"/>
         </div>
     </div>
     
@@ -32,7 +32,7 @@
 
 @code {
     [Parameter] 
-    public HostInfo hostInfo { get; set; }
+    public HostInfoEntity HostInfoEntity { get; set; }
     [Parameter] 
     public string ButtonText { get; set; } = "Save";
     [Parameter] 
