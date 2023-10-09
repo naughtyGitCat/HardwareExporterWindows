@@ -2,7 +2,8 @@
 using System.Data.SQLite;
 using Microsoft.Data.Sqlite;
 using NPoco;
-namespace HardwareExporterServer.Data;
+using HardwareExporterServer.Model;
+namespace HardwareExporterServer.Services;
 
 public class HostInfoManager
 {
@@ -38,21 +39,37 @@ public class HostInfoManager
         }
     }
 
+    public IEnumerable<HostInfoEntity> GetHostInfoEntities()
+    {
+        // InitTable();
+        return _database.Fetch<HostInfoEntity>();
+    }
+    
     public IEnumerable<HostInfo> GetHostInfos()
     {
         // InitTable();
-        return _database.Fetch<HostInfo>();
+        var entities = _database.Fetch<HostInfoEntity>();
+        return entities.Select(e => new HostInfo
+        {
+            HostIP = e.HostIP,
+            HostName = e.HostName,
+            ExporterPort = e.ExporterPort,
+            CreateTime = DateTime.UnixEpoch.AddSeconds((double)e.CreateTimestamp!),
+            UpdateTime = DateTime.UnixEpoch.AddSeconds((double)e.UpdateTimestamp!)
+        });
     }
     
-    public void InsertHostInfo(HostInfo hostInfo)
+    public void InsertHostInfo(HostInfoEntity hostInfoEntity)
     {
-        _database.Insert(hostInfo);
+        hostInfoEntity.CreateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+        hostInfoEntity.UpdateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
+        _database.Insert(hostInfoEntity);
     }
 
     public void DeleteHostInfo(int id)
     {
-       var d= _database.SingleById<HostInfo>(id);
-       _database.Delete<HostInfo>(d);
+       var d= _database.SingleById<HostInfoEntity>(id);
+       _database.Delete<HostInfoEntity>(d);
     }
 
 }

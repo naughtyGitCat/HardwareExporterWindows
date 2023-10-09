@@ -1,5 +1,6 @@
 @page "/fetchhost"
-@using HardwareExporterServer.Data
+@using HardwareExporterServer.Model
+@using HardwareExporterServer.Services
 @inject HostInfoManager hostInfoManager
 @inject HttpClient Http
 
@@ -32,8 +33,8 @@ else
                 <td>@host.HostName</td>
                 <td>@host.HostIP</td>
                 <td>@host.ExporterPort</td>
-                <td>@host.CreateTimestamp</td>
-                <td>@host.UpdateTimestamp</td>
+                <td>@host.CreateTime</td>
+                <td>@host.UpdateTime</td>
             </tr>
         }
         </tbody>
