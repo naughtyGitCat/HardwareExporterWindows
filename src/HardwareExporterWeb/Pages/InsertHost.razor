@@ -1,0 +1,18 @@
+@page "/InsertHost"
+@using HardwareExporterWeb.Models
+@using HardwareExporterWeb.Services
+@inject HostInfoManager hostInfoManager
+@inject NavigationManager navigationManager
+<h3>InsertHost</h3>
+
+<Form ButtonText="Insert Host" HostInfo="@hostInfo" OnValidSubmit="@Insert">
+</Form>
+
+@code {
+    readonly HostInfo hostInfo = new ();
+    void Insert()
+    {
+        hostInfoManager.InsertHostInfo(hostInfo);
+        navigationManager.NavigateTo("FetchHost");
+    }
+}
