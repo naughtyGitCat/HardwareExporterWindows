@@ -31,7 +31,7 @@ public class HostInfoManager
                                                    UpdateTimestamp INTEGER not null default 0
                                                );
                                                """;
-            using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+            using var database = GetDatabase();
             database.Execute(windowsHostTableDDL);
         }
         catch (Exception e)
@@ -40,15 +40,20 @@ public class HostInfoManager
         }
     }
 
+    private IDatabase GetDatabase()
+    {
+        return new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+    }
+    
     public IEnumerable<HostInfoEntity> GetHostInfoEntities()
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         return database.Fetch<HostInfoEntity>();
     }
     
     public IEnumerable<HostInfo> GetHostInfos()
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         // InitTable();
         var entities = database.Fetch<HostInfoEntity>();
         return entities.Select(e => new HostInfo
@@ -63,7 +68,7 @@ public class HostInfoManager
 
     public HostInfoEntity GetHostInfoEntity(string hostIP)
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         return database.Query<HostInfoEntity>().Where(h => h.HostIP == hostIP).First();
     }
 
@@ -82,7 +87,7 @@ public class HostInfoManager
     
     public void InsertHostInfo(HostInfoEntity hostInfoEntity)
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         hostInfoEntity.CreateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
         hostInfoEntity.UpdateTimestamp ??= new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
         database.Insert(hostInfoEntity);
@@ -90,7 +95,7 @@ public class HostInfoManager
 
     public void InsertHostInfo(HostInfo hostInfo)
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         var hostInfoEntity = new HostInfoEntity
         {
             ExporterPort = hostInfo.ExporterPort,
@@ -104,13 +109,13 @@ public class HostInfoManager
     
     public void DeleteHostInfo(string hostIP)
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
     }
 
     public void UpdateHostInfo(string hostIP, string? hostName, int? exporterPort)
     {
-        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        using var database = GetDatabase();
         if (hostName is null && exporterPort is null) return;
         var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
