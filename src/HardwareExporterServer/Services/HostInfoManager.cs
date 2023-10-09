@@ -61,10 +61,15 @@ public class HostInfoManager
         });
     }
 
-    public HostInfo GetHostInfo(string hostIP)
+    public HostInfoEntity GetHostInfoEntity(string hostIP)
     {
         using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
-        var entity= database.Query<HostInfoEntity>().Where(h => h.HostIP == hostIP).First();
+        return database.Query<HostInfoEntity>().Where(h => h.HostIP == hostIP).First();
+    }
+
+    public HostInfo GetHostInfo(string hostIP)
+    {
+        var entity = GetHostInfoEntity(hostIP);
         return new HostInfo
         {
             HostName = entity.HostName,
@@ -83,6 +88,20 @@ public class HostInfoManager
         database.Insert(hostInfoEntity);
     }
 
+    public void InsertHostInfo(HostInfo hostInfo)
+    {
+        using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
+        var hostInfoEntity = new HostInfoEntity
+        {
+            ExporterPort = hostInfo.ExporterPort,
+            HostName = hostInfo.HostName,
+            HostIP = hostInfo.HostIP,
+            CreateTimestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds(),
+            UpdateTimestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() 
+        };
+        database.Insert(hostInfoEntity);
+    }
+    
     public void DeleteHostInfo(string hostIP)
     {
         using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);

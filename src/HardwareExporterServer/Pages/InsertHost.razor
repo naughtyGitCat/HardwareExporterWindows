@@ -5,14 +5,14 @@
 @inject NavigationManager navigationManager
 <h3>InsertHost</h3>
 
-<Form ButtonText="Insert Host" HostInfoEntity="@_hostInfoEntity" OnValidSubmit="@Insert">
+<Form ButtonText="Insert Host" HostInfo="@hostInfo" OnValidSubmit="@Insert">
 </Form>
 
 @code {
-    readonly HostInfoEntity _hostInfoEntity = new ();
+    readonly HostInfo hostInfo = new ();
     void Insert()
     {
-        hostInfoManager.InsertHostInfo(_hostInfoEntity);
+        hostInfoManager.InsertHostInfo(hostInfo);
         navigationManager.NavigateTo("FetchHost");
     }
 }
