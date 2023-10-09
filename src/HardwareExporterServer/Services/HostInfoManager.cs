@@ -115,11 +115,11 @@ public class HostInfoManager
         var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
         {
-            setClause += $" AND HostName = {hostName}";
+            setClause += $" , HostName = {hostName}";
         }
         if (exporterPort != null)
         {
-            setClause += $" AND ExporterPort = {exporterPort}";
+            setClause += $" , ExporterPort = {exporterPort}";
         }
         var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
         _logger.LogInformation("update sql: {sql}",sql);
