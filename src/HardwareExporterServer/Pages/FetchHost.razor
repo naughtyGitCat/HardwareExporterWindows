@@ -2,8 +2,7 @@
 @using HardwareExporterServer.Model
 @using HardwareExporterServer.Services
 @inject HostInfoManager hostInfoManager
-@inject HttpClient Http
-
+@inject IJSRuntime js
 <PageTitle>Windows host list</PageTitle>
 
 <h1>Host Table</h1>
@@ -24,6 +23,7 @@ else
             <th>Port</th>
             <th>CreateTime</th>
             <th>UpdateTime</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +35,10 @@ else
                 <td>@host.ExporterPort</td>
                 <td>@host.CreateTime</td>
                 <td>@host.UpdateTime</td>
+                <td>
+                    <a class="btn btn-success" href="UpdateHost/@host.HostIP">Update</a>
+                    <button class="btn btn-danger" @onclick="() => DeleteAsync(@host.HostIP)">Delete</button>
+                </td>
             </tr>
         }
         </tbody>
@@ -47,5 +51,14 @@ else
     protected override void OnInitialized()
     {
         hosts = hostInfoManager.GetHostInfos();
+    }
+
+    async Task DeleteAsync(string hostIP)
+    {
+        if (await js.InvokeAsync<bool>("confirm", $"do you want to delete host with ip {hostIP}?"))
+        {
+            hostInfoManager.DeleteHostInfo(hostIP);
+            OnInitialized();
+        }
     }
 }

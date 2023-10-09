@@ -1,0 +1,27 @@
+@page "/UpdateHost/{hostIP:string}"
+@using HardwareExporterServer.Model
+@using HardwareExporterServer.Services
+@inject HostInfoManager hostInfoManager
+@inject IJSRuntime js
+@inject NavigationManager navigationManager
+<h3>UpdateHost</h3>
+
+<Form ButtonText="Update" hostInfo="@hostInfo" OnValidSubmit="@UpdateAsync"></Form>
+
+@code {
+    [Parameter]public string hostIP { get; set; }
+    HostInfo hostInfo = new ();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        hostInfo = hostInfoManager.GetHostInfo(hostIP);
+        await Task.CompletedTask;
+    }
+    
+    async Task UpdateAsync()
+    {
+        hostInfoManager.UpdateHostInfo(hostIP, hostInfo.HostName, hostInfo.ExporterPort);
+        await js.InvokeVoidAsync("alert", "Update Successfully");
+        navigationManager.NavigateTo("FetchHost");
+    }
+}

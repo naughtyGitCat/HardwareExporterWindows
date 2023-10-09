@@ -54,9 +54,14 @@ public class HostInfoManager
             HostIP = e.HostIP,
             HostName = e.HostName,
             ExporterPort = e.ExporterPort,
-            CreateTime = DateTime.UnixEpoch.AddSeconds((double)e.CreateTimestamp!),
-            UpdateTime = DateTime.UnixEpoch.AddSeconds((double)e.UpdateTimestamp!)
+            CreateTime = DateTime.UnixEpoch.AddSeconds((double)e.CreateTimestamp!).ToLocalTime(),
+            UpdateTime = DateTime.UnixEpoch.AddSeconds((double)e.UpdateTimestamp!).ToLocalTime()
         });
+    }
+
+    public HostInfo GetHostInfo(string hostIP)
+    {
+        return _database.Query<HostInfo>().Where(h => h.HostIP == hostIP).First();
     }
     
     public void InsertHostInfo(HostInfoEntity hostInfoEntity)
@@ -66,10 +71,25 @@ public class HostInfoManager
         _database.Insert(hostInfoEntity);
     }
 
-    public void DeleteHostInfo(int id)
+    public void DeleteHostInfo(string hostIP)
     {
-       var d= _database.SingleById<HostInfoEntity>(id);
-       _database.Delete<HostInfoEntity>(d);
+       _database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
+    }
+
+    public void UpdateHostInfo(string hostIP, string? hostName, int? exporterPort)
+    {
+        if (hostName is null && exporterPort is null) return;
+        var setClause = $"SET UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
+        if (hostName != null)
+        {
+            setClause += $" AND HostName = {hostName}";
+        }
+        if (exporterPort != null)
+        {
+            setClause += $" AND ExporterPort = {exporterPort}";
+        }
+        var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
+        _database.Execute(sql);
     }
 
 }
