@@ -64,7 +64,15 @@ public class HostInfoManager
     public HostInfo GetHostInfo(string hostIP)
     {
         using var database = new Database("Data Source=data.db", DatabaseType.SQLite, SqliteFactory.Instance);
-        return database.Query<HostInfo>().Where(h => h.HostIP == hostIP).First();
+        var entity= database.Query<HostInfoEntity>().Where(h => h.HostIP == hostIP).First();
+        return new HostInfo
+        {
+            HostName = entity.HostName,
+            HostIP = entity.HostIP,
+            ExporterPort = entity.ExporterPort,
+            CreateTime = DateTime.UnixEpoch.AddSeconds((double)entity.CreateTimestamp!).ToLocalTime(),
+            UpdateTime = DateTime.UnixEpoch.AddSeconds((double)entity.UpdateTimestamp!).ToLocalTime(),
+        };
     }
     
     public void InsertHostInfo(HostInfoEntity hostInfoEntity)
