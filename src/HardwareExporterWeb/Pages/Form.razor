@@ -1,0 +1,40 @@
+@using HardwareExporterWeb.Models
+<h3>Form</h3>
+
+<EditForm Model="@HostInfo" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator/>
+    <div class="form-group">
+        <label>Hostname: </label>
+        <div>
+            <InputText @bind-Value="@HostInfo.HostName"/>
+            <ValidationMessage For="@(() => HostInfo.HostName)"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>HostIP: </label>
+        <div>
+            <InputText @bind-Value="@HostInfo.HostIP"/>
+            <ValidationMessage For="@(() => HostInfo.HostIP)"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>ExporterPort: </label>
+        <div>
+            <InputNumber TValue="int" @bind-Value="@HostInfo.ExporterPort"/>
+            <ValidationMessage For="@(() => HostInfo.ExporterPort)"/>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] 
+    public required HostInfo HostInfo { get; set; }
+    [Parameter] 
+    public string ButtonText { get; set; } = "Save";
+    [Parameter] 
+    public EventCallback OnValidSubmit { get; set; }
+}
