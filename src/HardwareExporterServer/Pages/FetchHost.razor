@@ -37,7 +37,7 @@ else
                 <td>@host.UpdateTime</td>
                 <td>
                     <a class="btn btn-success" href="UpdateHost/@host.HostIP">Update</a>
-                    <button class="btn btn-danger" @onclick="() => DeleteAsync(@host.HostIP)">Delete</button>
+                    <button class="btn btn-danger" @onclick="@(() => DeleteAsync(host.HostIP))">Delete</button>
                 </td>
             </tr>
         }
