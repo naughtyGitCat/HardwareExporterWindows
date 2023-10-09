@@ -26,7 +26,4 @@ Global
 		{9CB695A8-26B0-4842-B029-F35545D89719}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CB695A8-26B0-4842-B029-F35545D89719}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{9CB695A8-26B0-4842-B029-F35545D89719} = {9E9698ED-2FEB-4404-BCA8-83F3A55B0A46}
-	EndGlobalSection
 EndGlobal
