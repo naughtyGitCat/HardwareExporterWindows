@@ -1,0 +1,63 @@
+// // 张锐志 2023-10-10
+using System;
+using System.Net;
+using System.Collections.Generic;
+using System.Net.NetworkInformation;
+using ArpLookup;
+using HardwareExporterWeb.Extensions;
+namespace HardwareExporterWeb.Services;
+
+public interface ILocalNetworkWatcher
+{
+    public Task<IEnumerable<Neighbor>> GetLocalNeighborsAsync();
+    public Task<bool> IsNeighborPortOpenAsync(string ip, int port);
+    public Task<bool> IsHardwareExporterAvailableAsync(string ip);
+}
+
+public record Neighbor
+{
+    public string Hostname { get; init; } = string.Empty;
+    public string MachineAddress { get; init; } = string.Empty;
+    public string IP { get; init; } = string.Empty;
+}
+public class LocalNetworkWatcher : ILocalNetworkWatcher
+{
+
+    private readonly ILogger<LocalNetworkWatcher> _logger;
+    public LocalNetworkWatcher(ILogger<LocalNetworkWatcher> logger)
+    {
+        _logger = logger;
+    }
+    
+    
+    public async Task<IEnumerable<Neighbor>> GetLocalNeighborsAsync()
+    {
+        IEnumerable<Neighbor> neighbors = Array.Empty<Neighbor>();
+        var localIP = (await Dns.GetHostEntryAsync(Dns.GetHostName())).AddressList[0];
+        var maskAddress = IPAddress.Parse("255.255.255.0");
+        var broadcastAddress = localIP.GetBroadcastAddress(maskAddress);
+        var networkAddress = localIP.GetNetworkAddress(maskAddress);
+        for (var i = networkAddress.GetNumber() + 1; i < broadcastAddress.GetNumber(); i++)
+        {
+            var neighborAddress = new IPAddress(i);
+            var macAddress = (await Arp.LookupAsync(neighborAddress))!.ToString();
+            var neighborHostname = (await Dns.GetHostEntryAsync(neighborAddress)).HostName;
+            _logger.LogInformation("neighbor: {}, mac: {}, hostname: {}",neighborAddress, macAddress, neighborHostname);
+            neighbors = neighbors.Append(new Neighbor
+            {
+                Hostname = neighborHostname,
+                IP = neighborAddress.ToString(),
+                MachineAddress = macAddress
+            });
+        }
+        return neighbors;
+    }
+    public async Task<bool> IsNeighborPortOpenAsync(string ip, int port)
+    {
+        throw new NotImplementedException();
+    }
+    public async Task<bool> IsHardwareExporterAvailableAsync(string ip)
+    {
+        throw new NotImplementedException();
+    }
+}
