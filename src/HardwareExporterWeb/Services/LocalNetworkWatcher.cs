@@ -42,7 +42,7 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
             var maskAddress = IPAddress.Parse("255.255.255.0");
             var broadcastAddress = localAddress.GetBroadcastAddress(maskAddress);
             var networkAddress = localAddress.GetNetworkAddress(maskAddress);
-            var range = new IPAddressRange(networkAddress, broadcastAddress);
+            var range = new IPAddressRange(new IPAddress(networkAddress.Address + 1), broadcastAddress);
             foreach (var neighborAddress in range)
             {
                 _logger.LogInformation("neighborAddress: {}",neighborAddress);
