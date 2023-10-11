@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using ArpLookup;
 using HardwareExporterWeb.Extensions;
+using NetTools;
 namespace HardwareExporterWeb.Services;
 
 public interface ILocalNetworkWatcher
@@ -40,9 +41,9 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
             var maskAddress = IPAddress.Parse("255.255.255.0");
             var broadcastAddress = localAddress.GetBroadcastAddress(maskAddress);
             var networkAddress = localAddress.GetNetworkAddress(maskAddress);
-            for (var i = networkAddress.GetNumber() + 1; i < broadcastAddress.GetNumber(); i++)
+            var range = new IPAddressRange(networkAddress, broadcastAddress);
+            foreach (var neighborAddress in range)
             {
-                var neighborAddress = new IPAddress(i);
                 _logger.LogInformation("neighborAddress: {}",neighborAddress);
                 var macAddress = await Arp.LookupAsync(neighborAddress);
                 if (macAddress is null)
