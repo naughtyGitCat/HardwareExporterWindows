@@ -14,7 +14,7 @@ public class TestLocalNetworkWatcher
     [Fact]
     public async Task TestGetLocalNeighborsAsync()
     {
-        var localNetworkWatcher = new LocalNetworkWatcher(new NullLogger<LocalNetworkWatcher>());
+        var localNetworkWatcher = new LocalNetworkWatcher(new XunitLogger<LocalNetworkWatcher>(_testOutputHelper));
         var neighbors = await localNetworkWatcher.GetLocalNeighborsAsync();
         foreach (var neighbor in neighbors)
         {
