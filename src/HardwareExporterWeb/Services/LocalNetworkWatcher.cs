@@ -33,28 +33,31 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
     public async Task<IEnumerable<Neighbor>> GetLocalNeighborsAsync()
     {
         IEnumerable<Neighbor> neighbors = Array.Empty<Neighbor>();
-        var localIP = (await Dns.GetHostEntryAsync(Dns.GetHostName())).AddressList[0];
-        var maskAddress = IPAddress.Parse("255.255.255.0");
-        var broadcastAddress = localIP.GetBroadcastAddress(maskAddress);
-        var networkAddress = localIP.GetNetworkAddress(maskAddress);
-        for (var i = networkAddress.GetNumber() + 1; i < broadcastAddress.GetNumber(); i++)
+        var ipHostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
+        foreach (var localAddress in ipHostEntry.AddressList)
         {
-            var neighborAddress = new IPAddress(i);
-            _logger.LogInformation("neighborAddress: {}",neighborAddress);
-            var macAddress = await Arp.LookupAsync(neighborAddress);
-            if (macAddress is null)
+            var maskAddress = IPAddress.Parse("255.255.255.0");
+            var broadcastAddress = localAddress.GetBroadcastAddress(maskAddress);
+            var networkAddress = localAddress.GetNetworkAddress(maskAddress);
+            for (var i = networkAddress.GetNumber() + 1; i < broadcastAddress.GetNumber(); i++)
             {
-                _logger.LogWarning("neighborAddress {} arp lookup result is null", neighborAddress);
-                continue;
-            }
-            var neighborHostname = (await Dns.GetHostEntryAsync(neighborAddress)).HostName;
-            _logger.LogInformation("neighbor: {}, mac: {}, hostname: {}",neighborAddress, macAddress, neighborHostname);
-            neighbors = neighbors.Append(new Neighbor
-            {
-                Hostname = neighborHostname,
-                IP = neighborAddress.ToString(),
-                MachineAddress = macAddress.ToString()
-            });
+                var neighborAddress = new IPAddress(i);
+                _logger.LogInformation("neighborAddress: {}",neighborAddress);
+                var macAddress = await Arp.LookupAsync(neighborAddress);
+                if (macAddress is null)
+                {
+                    _logger.LogWarning("neighborAddress {} arp lookup result is null", neighborAddress);
+                    continue;
+                }
+                var neighborHostname = (await Dns.GetHostEntryAsync(neighborAddress)).HostName;
+                _logger.LogInformation("neighbor: {}, mac: {}, hostname: {}",neighborAddress, macAddress, neighborHostname);
+                neighbors = neighbors.Append(new Neighbor
+                {
+                    Hostname = neighborHostname,
+                    IP = neighborAddress.ToString(),
+                    MachineAddress = macAddress.ToString()
+                });
+            }   
         }
         return neighbors;
     }
