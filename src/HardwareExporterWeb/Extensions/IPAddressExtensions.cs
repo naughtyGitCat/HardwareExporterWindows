@@ -24,6 +24,8 @@ public static class IPAddressExtensions
     public static long GetNumber(this IPAddress address)
     {
         var bytes= address.GetAddressBytes();
+        if (BitConverter.IsLittleEndian) bytes = bytes.Reverse().ToArray();
+        // BitConverter.ToUInt32(bytes, 0)
         return (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
     }
 
