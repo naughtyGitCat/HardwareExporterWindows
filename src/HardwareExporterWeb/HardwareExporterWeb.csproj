@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="ArpLookup" Version="2.0.3" />
+    <PackageReference Include="IPAddressRange" Version="6.0.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.11" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NPoco" Version="5.7.1" />
