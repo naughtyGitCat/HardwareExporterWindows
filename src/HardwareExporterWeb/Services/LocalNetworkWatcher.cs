@@ -40,14 +40,20 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
         for (var i = networkAddress.GetNumber() + 1; i < broadcastAddress.GetNumber(); i++)
         {
             var neighborAddress = new IPAddress(i);
-            var macAddress = (await Arp.LookupAsync(neighborAddress))!.ToString();
+            _logger.LogInformation("neighborAddress: {}",neighborAddress);
+            var macAddress = await Arp.LookupAsync(neighborAddress);
+            if (macAddress is null)
+            {
+                _logger.LogWarning("neighborAddress {} arp lookup result is null", neighborAddress);
+                continue;
+            }
             var neighborHostname = (await Dns.GetHostEntryAsync(neighborAddress)).HostName;
             _logger.LogInformation("neighbor: {}, mac: {}, hostname: {}",neighborAddress, macAddress, neighborHostname);
             neighbors = neighbors.Append(new Neighbor
             {
                 Hostname = neighborHostname,
                 IP = neighborAddress.ToString(),
-                MachineAddress = macAddress
+                MachineAddress = macAddress.ToString()
             });
         }
         return neighbors;
