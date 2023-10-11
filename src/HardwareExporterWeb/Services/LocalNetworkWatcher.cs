@@ -37,6 +37,7 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
         var ipHostEntry = await Dns.GetHostEntryAsync(Dns.GetHostName());
         foreach (var localAddress in ipHostEntry.AddressList)
         {
+            if (!localAddress.ToString().Contains("10.100.100")) continue;
             _logger.LogInformation("now scan with interface {}", localAddress.ToString());
             var maskAddress = IPAddress.Parse("255.255.255.0");
             var broadcastAddress = localAddress.GetBroadcastAddress(maskAddress);
