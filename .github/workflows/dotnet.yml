@@ -27,6 +27,7 @@ jobs:
           dotnet build --no-restore src/HardwareExporterWindows/HardwareExporterWindows.csproj
           dotnet build --no-restore test/HardwareExporterWindows.Tests/HardwareExporterWindows.Tests.csproj
           dotnet build --no-restore src/HardwareExporterWeb/HardwareExporterWeb.csproj
+          dotnet build --no-restore test/HardwareExporterWeb.Tests/HardwareExporterWeb.Tests.csproj
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish
