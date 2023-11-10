@@ -21,7 +21,7 @@
     
     async Task UpdateAsync()
     {
-        hostInfoManager.UpdateHostInfo(hostIP, hostInfo.HostName, hostInfo.ExporterPort);
+        hostInfoManager.UpdateHostInfo(hostIP, hostInfo.HostName, hostInfo.WindowsExporterPort, hostInfo.HardwareExporterPort);
         await js.InvokeVoidAsync("alert", "Update Successfully");
         navigationManager.NavigateTo("FetchHost");
     }

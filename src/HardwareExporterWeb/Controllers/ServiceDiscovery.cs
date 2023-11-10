@@ -16,6 +16,39 @@ public class ServiceDiscoveryController : ControllerBase
         _hostInfoManager = hostInfoManager;
     }
 
+    [HttpGet("WindowsExporter")]
+    public IEnumerable<ServiceDiscoveryDTO> GetWindowsExporters()
+    {
+        IEnumerable<ServiceDiscoveryDTO> ret;
+        try
+        {
+            var rawEntities= _hostInfoManager.GetHostInfoEntities();
+            ret = rawEntities.Select(e => new ServiceDiscoveryDTO
+            {
+                Targets = new[]
+                {
+                    $"{e.HostIP}:{e.WindowsExporterPort}"
+                },
+                Labels = new Dictionary<string, string>
+                {
+                    {
+                        "ip", e.HostIP
+                    },
+                    {
+                        "hostname", e.HostName
+                    }
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning("{e}", e);
+            ret = Array.Empty<ServiceDiscoveryDTO>();
+        }
+        return ret;
+    }
+    
+    [HttpGet("HardwareExporter")]
     public IEnumerable<ServiceDiscoveryDTO> GetExporters()
     {
         IEnumerable<ServiceDiscoveryDTO> ret;
@@ -26,7 +59,7 @@ public class ServiceDiscoveryController : ControllerBase
             {
                 Targets = new[]
                 {
-                    $"{e.HostIP}:{e.ExporterPort}"
+                    $"{e.HostIP}:{e.HardwareExporterPort}"
                 },
                 Labels = new Dictionary<string, string>
                 {

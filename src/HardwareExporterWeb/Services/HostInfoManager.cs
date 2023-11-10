@@ -26,7 +26,8 @@ public class HostInfoManager
                                                    ID int primary key,
                                                    HostName TEXT not null default '',
                                                    HostIP TEXT not null default '' UNIQUE,
-                                                   ExporterPort INTEGER not null default -1,
+                                                   HardwareExporterPort INTEGER not null default -1,
+                                                   WindowsExporterPort INTEGER not null default -1,
                                                    CreateTimestamp INTEGER not null default 0,
                                                    UpdateTimestamp INTEGER not null default 0
                                                );
@@ -60,7 +61,8 @@ public class HostInfoManager
         {
             HostIP = e.HostIP,
             HostName = e.HostName,
-            ExporterPort = e.ExporterPort,
+            WindowsExporterPort = e.WindowsExporterPort,
+            HardwareExporterPort = e.HardwareExporterPort,
             CreateTime = DateTime.UnixEpoch.AddSeconds((double)e.CreateTimestamp!).ToLocalTime(),
             UpdateTime = DateTime.UnixEpoch.AddSeconds((double)e.UpdateTimestamp!).ToLocalTime()
         });
@@ -79,7 +81,8 @@ public class HostInfoManager
         {
             HostName = entity.HostName,
             HostIP = entity.HostIP,
-            ExporterPort = entity.ExporterPort,
+            WindowsExporterPort = entity.WindowsExporterPort,
+            HardwareExporterPort = entity.HardwareExporterPort,
             CreateTime = DateTime.UnixEpoch.AddSeconds((double)entity.CreateTimestamp!).ToLocalTime(),
             UpdateTime = DateTime.UnixEpoch.AddSeconds((double)entity.UpdateTimestamp!).ToLocalTime(),
         };
@@ -98,7 +101,8 @@ public class HostInfoManager
         using var database = GetDatabase();
         var hostInfoEntity = new HostInfoEntity
         {
-            ExporterPort = hostInfo.ExporterPort,
+            WindowsExporterPort = hostInfo.WindowsExporterPort,
+            HardwareExporterPort = hostInfo.HardwareExporterPort,
             HostName = hostInfo.HostName,
             HostIP = hostInfo.HostIP,
             CreateTimestamp = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds(),
@@ -113,18 +117,22 @@ public class HostInfoManager
         database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
     }
 
-    public void UpdateHostInfo(string hostIP, string? hostName, int? exporterPort)
+    public void UpdateHostInfo(string hostIP, string? hostName, int? windowsExporterPort, int? hardwareExporterPort)
     {
         using var database = GetDatabase();
-        if (hostName is null && exporterPort is null) return;
+        if (hostName is null && windowsExporterPort is null && hardwareExporterPort is null) return;
         var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
         {
             setClause += $" , HostName = {hostName}";
         }
-        if (exporterPort != null)
+        if (windowsExporterPort != null)
         {
-            setClause += $" , ExporterPort = {exporterPort}";
+            setClause += $" , WindowsExporterPort = {windowsExporterPort}";
+        }
+        if (hardwareExporterPort != null)
+        {
+            setClause += $" , HardwareExporterPort = {hardwareExporterPort}";
         }
         var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
         _logger.LogInformation("update sql: {sql}",sql);
