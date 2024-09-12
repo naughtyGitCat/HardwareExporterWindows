@@ -27,9 +27,9 @@ public class UpdateVisitor : IVisitor
 
 
 [Route("api/[controller]")]
-public class XController : ControllerBase
+public class MetricsController : ControllerBase
 {
-    private string TrimDuplicateElments(string metricName)
+    private string TrimDuplicateElements(string metricName)
     {
         var rawElements = metricName.Split("_");
         var newElements = new List<string>();
@@ -122,13 +122,13 @@ public class XController : ControllerBase
                     {
                         continue;
                     }
-                    Console.WriteLine($"hardwareLabels: {JsonConvert.SerializeObject(hardwareLabels)}");
-                    Console.WriteLine($"subHardwareLabels: {JsonConvert.SerializeObject(subHardwareLabels)}");
+                    // Console.WriteLine($"hardwareLabels: {JsonConvert.SerializeObject(hardwareLabels)}");
+                    // Console.WriteLine($"subHardwareLabels: {JsonConvert.SerializeObject(subHardwareLabels)}");
                     var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
                     var sensorLabels = subHardwareLabels.ToList().Concat(pureSensorLabels.ToList());
-                    Console.WriteLine($"sensorLabels: {JsonConvert.SerializeObject(sensorLabels)}");
+                    // Console.WriteLine($"sensorLabels: {JsonConvert.SerializeObject(sensorLabels)}");
                     var subMetricName = $"{subPrefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
-                    subMetricName = TrimDuplicateElments(subMetricName);
+                    subMetricName = TrimDuplicateElements(subMetricName);
                     ret += $"# HELP {subMetricName} sensor identifier: {sensor.Identifier}\n";
                     ret += $"# TYPE {subMetricName} gauge\n";
                     var sensorLabelsRendered = string.Empty;
@@ -151,7 +151,7 @@ public class XController : ControllerBase
                 var (sensorName, pureSensorLabels) = Process(sensor.Name.ToLower());
                 var sensorLabels = hardwareLabels.ToList().Concat(pureSensorLabels.ToList());
                 var metricName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
-                metricName = TrimDuplicateElments(metricName);
+                metricName = TrimDuplicateElements(metricName);
                 ret += $"# HELP {metricName} sensor type: {sensor.SensorType}\n";
                 ret += $"# TYPE {metricName} gauge\n";
                 var sensorLabelsRendered = string.Empty;
