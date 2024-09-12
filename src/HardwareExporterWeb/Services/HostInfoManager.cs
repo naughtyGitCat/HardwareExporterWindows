@@ -124,7 +124,7 @@ public class HostInfoManager
         var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
         if (hostName != null)
         {
-            setClause += $" , HostName = {hostName}";
+            setClause += $" , HostName = '{hostName}'";
         }
         if (windowsExporterPort != null)
         {
@@ -134,7 +134,7 @@ public class HostInfoManager
         {
             setClause += $" , HardwareExporterPort = {hardwareExporterPort}";
         }
-        var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = {hostIP}";
+        var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = '{hostIP}'";
         _logger.LogInformation("update sql: {sql}",sql);
         database.Execute(sql);
     }
