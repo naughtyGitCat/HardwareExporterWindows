@@ -23,8 +23,7 @@ namespace HardwareExporterWindows
 
             computer.Open();
             computer.Accept(new UpdateVisitor());
-            var g1 = Metrics.CreateGauge("g1", "this is test gauge", "foo", "foo1");
-            g1.WithLabels(new string[] { "bar","bar1" }).Set(114514);
+
             foreach (var hardware in computer.Hardware)
             {
                 var prefix = $"{hardware.HardwareType.ToString().ToLower()}";
