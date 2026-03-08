@@ -113,11 +113,69 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
     
     public async Task<bool> IsNeighborPortOpenAsync(string ip, int port)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using var client = new System.Net.Sockets.TcpClient();
+            var connectTask = client.ConnectAsync(ip, port);
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(2));
+            
+            var completedTask = await Task.WhenAny(connectTask, timeoutTask);
+            
+            if (completedTask == connectTask && !connectTask.IsFaulted)
+            {
+                _logger.LogDebug("Port {Port} is open on {IP}", port, ip);
+                return true;
+            }
+            
+            _logger.LogDebug("Port {Port} is closed or unreachable on {IP}", port, ip);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Failed to check port {Port} on {IP}", port, ip);
+            return false;
+        }
     }
     
     public async Task<bool> IsHardwareExporterAvailableAsync(string ip)
     {
-        throw new NotImplementedException();
+        const int hardwareExporterPort = 9888;
+        
+        try
+        {
+            // First check if port is open
+            if (!await IsNeighborPortOpenAsync(ip, hardwareExporterPort))
+            {
+                _logger.LogDebug("HardwareExporter port {Port} is not open on {IP}", hardwareExporterPort, ip);
+                return false;
+            }
+            
+            // Try to fetch metrics endpoint to verify it's actually HardwareExporter
+            using var httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(3)
+            };
+            
+            var response = await httpClient.GetAsync($"http://{ip}:{hardwareExporterPort}/metrics");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                // Check if response contains hardware metrics
+                if (content.Contains("hardware_") || content.Contains("# HELP hardware_"))
+                {
+                    _logger.LogInformation("HardwareExporter is available on {IP}:{Port}", ip, hardwareExporterPort);
+                    return true;
+                }
+            }
+            
+            _logger.LogDebug("Port {Port} is open on {IP} but doesn't appear to be HardwareExporter", hardwareExporterPort, ip);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Failed to verify HardwareExporter on {IP}", ip);
+            return false;
+        }
     }
 }
