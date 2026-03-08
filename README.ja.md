@@ -214,7 +214,11 @@ dotnet test
 
 ## ライセンス
 
-[ここにライセンスを追加]
+MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照してください。
+
+このプロジェクトは以下のオープンソースライブラリを使用しています：
+- [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (MPL 2.0)
+- [prometheus-net](https://github.com/prometheus-net/prometheus-net) (MIT)
 
 ## 貢献
 

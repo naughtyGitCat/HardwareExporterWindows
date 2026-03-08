@@ -214,7 +214,11 @@ dotnet test
 
 ## License
 
-[Add your license here]
+MIT License - see [LICENSE](LICENSE) file for details.
+
+This project uses the following open source libraries:
+- [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (MPL 2.0)
+- [prometheus-net](https://github.com/prometheus-net/prometheus-net) (MIT)
 
 ## Contributing
 

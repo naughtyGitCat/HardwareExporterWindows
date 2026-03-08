@@ -214,7 +214,11 @@ dotnet test
 
 ## 许可证
 
-[在此添加你的许可证]
+MIT License - 详见 [LICENSE](LICENSE) 文件。
+
+本项目使用了以下开源库：
+- [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (MPL 2.0)
+- [prometheus-net](https://github.com/prometheus-net/prometheus-net) (MIT)
 
 ## 贡献
 
