@@ -37,7 +37,7 @@ All notable changes to this project will be documented in this file.
 Before merging, please test on Windows:
 
 1. ✅ Service starts successfully
-2. ✅ Metrics endpoint returns data: `http://localhost:9888/api/metrics`
+2. ✅ Metrics endpoint returns data: `http://localhost:9888/metrics`
 3. ✅ Configuration changes are respected (try disabling GPU monitoring)
 4. ✅ Service runs stably for extended period
 5. ✅ Memory usage remains stable (no leaks)

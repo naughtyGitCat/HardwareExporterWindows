@@ -6,7 +6,7 @@ using HardwareExporterWindows.Services;
 
 namespace HardwareExporterWindows.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class MetricsController : ControllerBase
 {
@@ -100,7 +100,7 @@ public class MetricsController : ControllerBase
     }
 
     /// <summary>
-    /// Generate Prometheus metrics from hardware sensors
+    /// Generate Prometheus metrics from hardware sensors and .NET runtime
     /// </summary>
     [HttpGet]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -111,11 +111,29 @@ public class MetricsController : ControllerBase
         {
             _logger.LogDebug("Starting metrics collection");
             
-            // Update all hardware sensors
+            var metricsBuilder = new System.Text.StringBuilder();
+            
+            // First, collect .NET runtime metrics from prometheus-net
+            try
+            {
+                var registry = Prometheus.Metrics.DefaultRegistry;
+                using var stream = new System.IO.MemoryStream();
+                await registry.CollectAndExportAsTextAsync(stream);
+                stream.Position = 0;
+                using var reader = new System.IO.StreamReader(stream);
+                var dotnetMetrics = await reader.ReadToEndAsync();
+                metricsBuilder.AppendLine(dotnetMetrics);
+                metricsBuilder.AppendLine(); // Add blank line separator
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to collect .NET runtime metrics, continuing with hardware metrics only");
+            }
+            
+            // Then, collect hardware metrics
             await _hardwareMonitor.UpdateAsync();
             
             var computer = _hardwareMonitor.GetComputer();
-            var metricsBuilder = new System.Text.StringBuilder();
             
             foreach (var hardware in computer.Hardware)
             {

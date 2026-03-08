@@ -147,7 +147,7 @@ hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
 ### No metrics appearing
 
 1. Check if the service is running: `Get-Service HardwareExporter`
-2. Test the endpoint: `curl http://localhost:9888/api/metrics`
+2. Test the endpoint: `curl http://localhost:9888/metrics`
 3. Check logs in Event Viewer under "Application"
 
 ### Firewall issues
@@ -178,7 +178,7 @@ cd src/HardwareExporterWindows
 dotnet run
 ```
 
-Access metrics at: http://localhost:9888/api/metrics
+Access metrics at: http://localhost:9888/metrics
 
 ### Running Tests
 

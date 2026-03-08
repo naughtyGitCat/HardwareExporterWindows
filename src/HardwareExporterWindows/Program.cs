@@ -40,6 +40,6 @@ if (builder.Configuration.GetValue<bool>("UseHttpsRedirection", false))
 
 app.UseAuthorization();
 app.MapControllers();
-app.MapMetrics();
+// Note: Prometheus .NET metrics are now included in the /metrics endpoint via MetricsController
 
 app.Run();
