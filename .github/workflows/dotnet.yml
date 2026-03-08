@@ -70,6 +70,9 @@ jobs:
     
     - name: Build MSI Installer
       run: |
+          # Create installer files directory
+          New-Item -ItemType Directory -Path installer/files -Force | Out-Null
+          
           # Copy published files to installer directory
           Copy-Item -Path bin/publish/HardwareExporterWindows/* -Destination installer/files/ -Recurse -Force
           
