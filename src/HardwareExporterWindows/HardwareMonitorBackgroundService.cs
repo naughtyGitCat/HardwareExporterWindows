@@ -3,10 +3,11 @@ using Newtonsoft.Json;
 using System.Collections.Immutable;
 using Prometheus;
 using HardwareExporterWindows.Controllers;
+using HardwareExporterWindows.Services;
 
 namespace HardwareExporterWindows
 {
-    public class Y : BackgroundService
+    public class HardwareMonitorBackgroundService : BackgroundService
     {
         public void Monitor()
         {

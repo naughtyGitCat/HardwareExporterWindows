@@ -1,30 +1,44 @@
 using Prometheus;
-using HardwareExporterWindows;
+using HardwareExporterWindows.Configuration;
+using HardwareExporterWindows.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add configuration
+builder.Services.Configure<HardwareMonitorOptions>(
+    builder.Configuration.GetSection(HardwareMonitorOptions.SectionName));
 
+// Add services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-// https://stackoverflow.com/questions/7764088/net-console-application-as-windows-service
-builder.Host.UseWindowsService(c=>c.ServiceName="HardwareExporter");
-//builder.Services.AddHostedService<Y>();
+
+// Register hardware monitor as singleton hosted service
+builder.Services.AddSingleton<HardwareMonitorService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<HardwareMonitorService>());
+
+// Configure Windows Service
+builder.Host.UseWindowsService(options =>
+{
+    options.ServiceName = "HardwareExporter";
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection if configured
+if (builder.Configuration.GetValue<bool>("UseHttpsRedirection", false))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
-
 app.MapControllers();
 app.MapMetrics();
 
