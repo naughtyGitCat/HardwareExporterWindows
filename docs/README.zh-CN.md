@@ -1,6 +1,6 @@
 # HardwareExporterWindows
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
+[English](../README.md) | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 基于 LibreHardwareMonitor 的 Windows 硬件指标 Prometheus 导出器。
 
