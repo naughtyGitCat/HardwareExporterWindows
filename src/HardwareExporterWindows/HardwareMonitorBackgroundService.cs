@@ -6,7 +6,7 @@ using HardwareExporterWindows.Controllers;
 
 namespace HardwareExporterWindows
 {
-    public class Y : BackgroundService
+    public class HardwareMonitorBackgroundService : BackgroundService
     {
         public void Monitor()
         {
