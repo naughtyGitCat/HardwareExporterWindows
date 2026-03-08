@@ -1,69 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" 
-           Name="Hardware Exporter" 
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  
+  <Package Name="Hardware Exporter" 
            Language="1033" 
            Version="1.0.0.0" 
            Manufacturer="Hardware Exporter" 
-           UpgradeCode="A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D">
+           UpgradeCode="A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D"
+           InstallerVersion="200"
+           Compressed="yes"
+           Scope="perMachine">
     
-    <Package InstallerVersion="200" 
-             Compressed="yes" 
-             InstallScope="perMachine" 
-             Description="Hardware Exporter Windows Service"
-             Comments="Prometheus exporter for hardware metrics" />
+    <SummaryInformation Description="Hardware Exporter Windows Service"
+                        Comments="Prometheus exporter for hardware metrics" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
     <Feature Id="ProductFeature" Title="Hardware Exporter" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
-      <ComponentRef Id="InstallScript" />
     </Feature>
 
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="HardwareExporter" />
-      </Directory>
-    </Directory>
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="HardwareExporter" />
+    </StandardDirectory>
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="MainExecutable" Guid="*">
-        <File Id="HardwareExporterWindows.exe" 
-              Source="$(var.SourceDir)\HardwareExporterWindows.exe" 
-              KeyPath="yes" />
+      <Component Id="MainExecutable">
+        <File Source="$(var.SourceDir)\HardwareExporterWindows.exe" />
       </Component>
-      <Component Id="AppSettings" Guid="*">
-        <File Id="appsettings.json" 
-              Source="$(var.SourceDir)\appsettings.json" 
-              KeyPath="yes" />
+      <Component Id="AppSettings">
+        <File Source="$(var.SourceDir)\appsettings.json" />
       </Component>
-      <Component Id="InstallScriptFile" Guid="*">
-        <File Id="install.ps1" 
-              Source="$(var.SourceDir)\install.ps1" 
-              KeyPath="yes" />
+      <Component Id="InstallScriptFile">
+        <File Source="$(var.SourceDir)\install.ps1" />
       </Component>
     </ComponentGroup>
 
-    <Component Id="InstallScript" Directory="INSTALLFOLDER" Guid="*">
-      <File Id="InstallPS1" Source="$(var.SourceDir)\install.ps1" KeyPath="yes" />
-      
-      <!-- Run install.ps1 after installation -->
-      <CustomAction Id="RunInstallScript"
-                    Directory="INSTALLFOLDER"
-                    ExeCommand="powershell.exe -ExecutionPolicy Bypass -File &quot;[INSTALLFOLDER]install.ps1&quot;"
-                    Execute="deferred"
-                    Impersonate="no"
-                    Return="check" />
-    </Component>
+    <CustomAction Id="RunInstallScript"
+                  Directory="INSTALLFOLDER"
+                  ExeCommand="powershell.exe -ExecutionPolicy Bypass -File &quot;[INSTALLFOLDER]install.ps1&quot;"
+                  Execute="deferred"
+                  Impersonate="no"
+                  Return="check" />
 
     <InstallExecuteSequence>
       <Custom Action="RunInstallScript" After="InstallFiles">NOT Installed</Custom>
     </InstallExecuteSequence>
 
-    <UI>
-      <UIRef Id="WixUI_Minimal" />
-    </UI>
+    <ui:WixUI Id="WixUI_Minimal" />
 
-  </Product>
+  </Package>
 </Wix>
