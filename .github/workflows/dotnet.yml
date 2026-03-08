@@ -63,12 +63,28 @@ jobs:
           Compress-Archive -Path bin/publish/HardwareExporterWindows/* -DestinationPath HardwareExporterWindows-win-x64.zip
           Compress-Archive -Path bin/publish/HardwareExporterWeb/* -DestinationPath HardwareExporterWeb-win-x64.zip
     
+    - name: Setup WiX Toolset
+      run: |
+          dotnet tool install --global wix --version 5.0.2
+          wix extension add WixToolset.UI.wixext
+    
+    - name: Build MSI Installer
+      run: |
+          # Copy published files to installer directory
+          Copy-Item -Path bin/publish/HardwareExporterWindows/* -Destination installer/files/ -Recurse -Force
+          
+          # Build MSI using WiX
+          cd installer
+          wix build HardwareExporter.wxs -ext WixToolset.UI.wixext -out ../HardwareExporterWindows-win-x64.msi -d SourceDir=files
+          cd ..
+    
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: release-packages
         path: |
           HardwareExporterWindows-win-x64.zip
+          HardwareExporterWindows-win-x64.msi
           HardwareExporterWeb-win-x64.zip
         retention-days: 90
     
@@ -99,15 +115,27 @@ jobs:
           ${{ github.event.head_commit.message }}
           
           ### Downloads
+          - `HardwareExporterWindows-win-x64.msi` - **Windows Installer (Recommended)** - Automatic service installation
           - `HardwareExporterWindows-win-x64.zip` - Windows hardware exporter (standalone)
           - `HardwareExporterWeb-win-x64.zip` - Web interface (standalone)
           
           ### Installation
+          
+          **Option 1: MSI Installer (Recommended)**
+          1. Download `HardwareExporterWindows-win-x64.msi`
+          2. Double-click to install
+          3. The installer will automatically:
+             - Copy files to `C:\Program Files\HardwareExporter`
+             - Install and start the Windows Service
+             - Configure firewall rules
+          
+          **Option 2: Manual Installation**
           1. Download the appropriate zip file
           2. Extract to your desired location
           3. Run `HardwareExporterWindows.exe` or `HardwareExporterWeb.exe`
           4. For Windows Service installation, run `install.ps1` as Administrator
         files: |
+          HardwareExporterWindows-win-x64.msi
           HardwareExporterWindows-win-x64.zip
           HardwareExporterWeb-win-x64.zip
         draft: false
