@@ -67,9 +67,35 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
             var maskAddress = IPAddress.Parse(_options.SubnetMask);
             var broadcastAddress = localAddress.GetBroadcastAddress(maskAddress);
             var networkAddress = localAddress.GetNetworkAddress(maskAddress);
-            var range = new IPAddressRange(
-                new IPAddress(networkAddress.Address + 1), 
-                new IPAddress(broadcastAddress.Address - 1));
+            
+            // Create range from network+1 to broadcast-1 (skip network and broadcast addresses)
+            // Use IPAddressRange constructor that takes begin and end as IPAddress
+            var beginBytes = networkAddress.GetAddressBytes();
+            var endBytes = broadcastAddress.GetAddressBytes();
+            
+            // Increment begin address (network + 1)
+            for (int i = beginBytes.Length - 1; i >= 0; i--)
+            {
+                if (++beginBytes[i] != 0) break;
+            }
+            
+            // Decrement end address (broadcast - 1)
+            for (int i = endBytes.Length - 1; i >= 0; i--)
+            {
+                if (endBytes[i]-- != 0) break;
+            }
+            
+            var beginAddress = new IPAddress(beginBytes);
+            var endAddress = new IPAddress(endBytes);
+            
+            // Check if range is valid (begin <= end)
+            if (CompareIPAddresses(beginAddress, endAddress) > 0)
+            {
+                _logger.LogWarning("Subnet too small to scan: {}/{}", localAddress, _options.SubnetMask);
+                continue;
+            }
+            
+            var range = new IPAddressRange(beginAddress, endAddress);
             
             foreach (var neighborAddress in range)
             {
@@ -177,5 +203,26 @@ public class LocalNetworkWatcher : ILocalNetworkWatcher
             _logger.LogDebug(ex, "Failed to verify HardwareExporter on {IP}", ip);
             return false;
         }
+    }
+    
+    private static int CompareIPAddresses(IPAddress a, IPAddress b)
+    {
+        var bytesA = a.GetAddressBytes();
+        var bytesB = b.GetAddressBytes();
+        
+        if (bytesA.Length != bytesB.Length)
+        {
+            return bytesA.Length.CompareTo(bytesB.Length);
+        }
+        
+        for (int i = 0; i < bytesA.Length; i++)
+        {
+            if (bytesA[i] != bytesB[i])
+            {
+                return bytesA[i].CompareTo(bytesB[i]);
+            }
+        }
+        
+        return 0;
     }
 }
