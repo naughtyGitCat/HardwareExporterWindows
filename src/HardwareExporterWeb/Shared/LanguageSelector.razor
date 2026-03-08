@@ -4,9 +4,9 @@
 
 <div class="language-selector">
     <select class="form-select form-select-sm" @onchange="OnLanguageChanged" value="@L.CurrentCulture.Name">
-        @foreach (var (code, name) in L.GetAvailableLanguages())
+        @foreach (var (langCode, langName) in L.GetAvailableLanguages())
         {
-            <option value="@code">@name</option>
+            <option value="@langCode">@langName</option>
         }
     </select>
 </div>
