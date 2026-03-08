@@ -22,12 +22,23 @@ This exporter provides accurate hardware monitoring data by using LibreHardwareM
 ### Prerequisites
 
 - Windows 10/11 or Windows Server 2016+
-- .NET 9.0 Runtime
+- .NET 10.0 Runtime (or SDK for development)
 - Administrator privileges (required for hardware access)
 
 ### Quick Start
 
-1. Download the latest release
+**Option 1: MSI Installer (Recommended)**
+
+1. Download `HardwareExporterWindows-win-x64.msi` from the [latest release](https://github.com/naughtyGitCat/HardwareExporterWindows/releases)
+2. Double-click the MSI file to install
+3. The installer will automatically:
+   - Copy files to `C:\Program Files\HardwareExporter`
+   - Install and start the Windows Service
+   - Configure firewall rules
+
+**Option 2: Manual Installation with PowerShell Script**
+
+1. Download `HardwareExporterWindows-win-x64.zip` from the [latest release](https://github.com/naughtyGitCat/HardwareExporterWindows/releases)
 2. Extract to `C:\Program Files\HardwareExporter`
 3. Run PowerShell as Administrator
 4. Execute the installation script:
@@ -103,7 +114,14 @@ scrape_configs:
 
 ## Available Metrics
 
-The exporter provides metrics in the following format:
+The exporter provides two types of metrics:
+
+1. **Hardware Metrics** - From LibreHardwareMonitor
+2. **.NET Runtime Metrics** - From prometheus-net (GC, threads, memory, etc.)
+
+All metrics are available at the `/metrics` endpoint.
+
+### Hardware Metrics Format
 
 ```
 hardware_{type}_{sensor_type}_{sensor_name}{labels} value
@@ -142,7 +160,8 @@ hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
 
 1. Check Windows Event Viewer for errors
 2. Ensure you have Administrator privileges
-3. Verify .NET 9.0 Runtime is installed
+3. Verify .NET 10.0 Runtime is installed
+4. Check if port 9888 is already in use
 
 ### No metrics appearing
 
