@@ -1,7 +1,7 @@
-# This workflow will build a .NET project
+# This workflow will build a .NET project and create releases
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: .NET Build and Release
 
 on:
   push:
@@ -11,45 +11,104 @@ on:
 
 jobs:
   build:
-
-    runs-on:  windows-2022
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for version tagging
+    
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+    
     - name: Restore dependencies
       run: dotnet restore
+    
     - name: Build
       run: |
-          dotnet build --no-restore src/HardwareExporterWindows/HardwareExporterWindows.csproj
-          dotnet build --no-restore test/HardwareExporterWindows.Tests/HardwareExporterWindows.Tests.csproj
-          dotnet build --no-restore src/HardwareExporterWeb/HardwareExporterWeb.csproj
-          dotnet build --no-restore test/HardwareExporterWeb.Tests/HardwareExporterWeb.Tests.csproj
+          dotnet build --no-restore --configuration Release src/HardwareExporterWindows/HardwareExporterWindows.csproj
+          dotnet build --no-restore --configuration Release test/HardwareExporterWindows.Tests/HardwareExporterWindows.Tests.csproj
+          dotnet build --no-restore --configuration Release src/HardwareExporterWeb/HardwareExporterWeb.csproj
+          dotnet build --no-restore --configuration Release test/HardwareExporterWeb.Tests/HardwareExporterWeb.Tests.csproj
+    
     - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Publish
+      run: dotnet test --no-build --configuration Release --verbosity normal
+    
+    - name: Publish HardwareExporterWindows
       run: |
-          dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish/HardwareExporterWindows  src/HardwareExporterWindows/HardwareExporterWindows.csproj
-          dotnet publish -r win-x64 --self-contained -p:PublishSingleFile=true -o bin/publish/HardwareExporterWeb  src/HardwareExporterWeb/HardwareExporterWeb.csproj
-    - name: Archive
+          dotnet publish src/HardwareExporterWindows/HardwareExporterWindows.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -o bin/publish/HardwareExporterWindows
+    
+    - name: Publish HardwareExporterWeb
       run: |
-          Compress-Archive -Path bin/publish/HardwareExporterWeb -DestinationPath web.zip
-          Compress-Archive -Path bin/publish/HardwareExporterWindows -DestinationPath exporter.zip
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+          dotnet publish src/HardwareExporterWeb/HardwareExporterWeb.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -o bin/publish/HardwareExporterWeb
+    
+    - name: Create Archives
+      run: |
+          Compress-Archive -Path bin/publish/HardwareExporterWindows/* -DestinationPath HardwareExporterWindows-win-x64.zip
+          Compress-Archive -Path bin/publish/HardwareExporterWeb/* -DestinationPath HardwareExporterWeb-win-x64.zip
+    
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
       with:
-        name: publish_file
+        name: release-packages
         path: |
-          web.zip
-          exporter.zip
-    - name: Release
-      if: startsWith(github.ref, 'refs/tags/')
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HardwareExporterWindows-win-x64.zip
+          HardwareExporterWeb-win-x64.zip
+        retention-days: 90
+    
+    - name: Generate Version Tag
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      id: version
       run: |
-          $TagName = $env:GITHUB_REF -replace 'refs/tags/', ''
-          Get-ChildItem -Path ./ -Include @('publish.zip') | Foreach-Object {gh release upload $TagName $_}
-          make push-all
+          $timestamp = Get-Date -Format "yyyy.MM.dd.HHmm"
+          $shortSha = "${{ github.sha }}".Substring(0, 7)
+          $version = "v$timestamp-$shortSha"
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          echo "Generated version: $version"
+    
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        name: Release ${{ steps.version.outputs.VERSION }}
+        body: |
+          ## Automated Release
+          
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          **Date:** ${{ github.event.head_commit.timestamp }}
+          
+          ### Changes
+          ${{ github.event.head_commit.message }}
+          
+          ### Downloads
+          - `HardwareExporterWindows-win-x64.zip` - Windows hardware exporter (standalone)
+          - `HardwareExporterWeb-win-x64.zip` - Web interface (standalone)
+          
+          ### Installation
+          1. Download the appropriate zip file
+          2. Extract to your desired location
+          3. Run `HardwareExporterWindows.exe` or `HardwareExporterWeb.exe`
+          4. For Windows Service installation, run `install.ps1` as Administrator
+        files: |
+          HardwareExporterWindows-win-x64.zip
+          HardwareExporterWeb-win-x64.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
