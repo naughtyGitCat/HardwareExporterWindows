@@ -1,9 +1,22 @@
-﻿@page "/"
+@page "/"
+@using HardwareExporterWeb.Services
+@inject LocalizationService L
+@implements IDisposable
 
-<PageTitle>Index</PageTitle>
+<PageTitle>@L["AppTitle"]</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>@L["HelloWorld"]</h1>
 
-Welcome to your new app.
+<p>@L["WelcomeMessage"]</p>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+@code {
+    protected override void OnInitialized()
+    {
+        L.OnLanguageChanged += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        L.OnLanguageChanged -= StateHasChanged;
+    }
+}

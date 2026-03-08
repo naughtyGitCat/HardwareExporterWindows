@@ -1,9 +1,16 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+@using HardwareExporterWeb.Services
+@inject LocalizationService L
+@implements IDisposable
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">HardwareExporterWeb</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <a class="navbar-brand" href="">@L["AppTitle"]</a>
+        <div class="d-flex align-items-center">
+            <LanguageSelector />
+            <button title="Navigation menu" class="navbar-toggler ms-2" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -11,22 +18,17 @@
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+                <span class="oi oi-home" aria-hidden="true"></span> @L["Home"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="fetchhost">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch host
+                <span class="oi oi-list-rich" aria-hidden="true"></span> @L["HostList"]
             </NavLink>
         </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="inserthost">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Insert host
+                <span class="oi oi-plus" aria-hidden="true"></span> @L["InsertHost"]
             </NavLink>
         </div>
     </nav>
@@ -37,8 +39,18 @@
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    protected override void OnInitialized()
+    {
+        L.OnLanguageChanged += StateHasChanged;
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    public void Dispose()
+    {
+        L.OnLanguageChanged -= StateHasChanged;
     }
 }

@@ -13,6 +13,7 @@ builder.Services.Configure<NetworkScanOptions>(
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<HostInfoManager>();
+builder.Services.AddSingleton<LocalizationService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,35 @@
+{
+  "AppTitle": "Hardware Exporter Web",
+  "Home": "Home",
+  "HostList": "Host List",
+  "InsertHost": "Add Host",
+  "UpdateHost": "Update Host",
+  "Language": "Language",
+  
+  "HostTable": "Host Table",
+  "ManageHostInfo": "Manage host information on this page",
+  "Loading": "Loading...",
+  
+  "Host": "Host",
+  "IP": "IP Address",
+  "WindowsExporterPort": "Windows Exporter Port",
+  "HardwareExporterPort": "Hardware Exporter Port",
+  "CreateTime": "Create Time",
+  "UpdateTime": "Update Time",
+  "Actions": "Actions",
+  
+  "Update": "Update",
+  "Delete": "Delete",
+  "Save": "Save",
+  "Cancel": "Cancel",
+  
+  "ConfirmDelete": "Do you want to delete host with IP {0}?",
+  
+  "AddNewHost": "Add New Host",
+  "EditHost": "Edit Host",
+  "HostName": "Host Name",
+  "HostIP": "Host IP",
+  
+  "HelloWorld": "Hello, world!",
+  "WelcomeMessage": "Welcome to Hardware Exporter Web - Prometheus Service Discovery"
+}

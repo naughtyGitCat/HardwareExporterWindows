@@ -1,0 +1,43 @@
+@using HardwareExporterWeb.Services
+@inject LocalizationService L
+@implements IDisposable
+
+<div class="language-selector">
+    <select class="form-select form-select-sm" @onchange="OnLanguageChanged" value="@L.CurrentCulture.Name">
+        @foreach (var (code, name) in L.GetAvailableLanguages())
+        {
+            <option value="@code">@name</option>
+        }
+    </select>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        L.OnLanguageChanged += StateHasChanged;
+    }
+
+    private void OnLanguageChanged(ChangeEventArgs e)
+    {
+        if (e.Value is string cultureName)
+        {
+            L.SetLanguage(cultureName);
+        }
+    }
+
+    public void Dispose()
+    {
+        L.OnLanguageChanged -= StateHasChanged;
+    }
+}
+
+<style>
+    .language-selector {
+        display: inline-block;
+    }
+    
+    .language-selector select {
+        width: auto;
+        min-width: 120px;
+    }
+</style>

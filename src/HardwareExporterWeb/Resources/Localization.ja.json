@@ -1,0 +1,35 @@
+{
+  "AppTitle": "ハードウェアエクスポーター Web",
+  "Home": "ホーム",
+  "HostList": "ホストリスト",
+  "InsertHost": "ホスト追加",
+  "UpdateHost": "ホスト更新",
+  "Language": "言語",
+  
+  "HostTable": "ホストテーブル",
+  "ManageHostInfo": "このページでホスト情報を管理します",
+  "Loading": "読み込み中...",
+  
+  "Host": "ホスト",
+  "IP": "IP アドレス",
+  "WindowsExporterPort": "Windows Exporter ポート",
+  "HardwareExporterPort": "Hardware Exporter ポート",
+  "CreateTime": "作成時刻",
+  "UpdateTime": "更新時刻",
+  "Actions": "操作",
+  
+  "Update": "更新",
+  "Delete": "削除",
+  "Save": "保存",
+  "Cancel": "キャンセル",
+  
+  "ConfirmDelete": "IP {0} のホストを削除しますか？",
+  
+  "AddNewHost": "新しいホストを追加",
+  "EditHost": "ホストを編集",
+  "HostName": "ホスト名",
+  "HostIP": "ホスト IP",
+  
+  "HelloWorld": "こんにちは、世界！",
+  "WelcomeMessage": "ハードウェアエクスポーター Web へようこそ - Prometheus サービスディスカバリー"
+}
