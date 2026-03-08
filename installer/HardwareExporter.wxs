@@ -44,9 +44,7 @@
                   Return="check" />
 
     <InstallExecuteSequence>
-      <Custom Action="RunInstallScript" After="InstallFiles">
-        <Condition>NOT Installed</Condition>
-      </Custom>
+      <Custom Action="RunInstallScript" After="InstallFiles" Condition="NOT Installed" />
     </InstallExecuteSequence>
 
     <ui:WixUI Id="WixUI_Minimal" />
