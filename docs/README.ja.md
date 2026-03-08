@@ -118,6 +118,8 @@ scrape_configs:
 
 **HardwareExporterWeb** は、Prometheus の自動サービスディスカバリー機能を提供するオプションのサービスです。**メトリクス収集とは無関係** で、Prometheus がネットワーク上の監視対象を自動的に発見するのを支援します。
 
+📖 **[完全なドキュメント](../src/HardwareExporterWeb/README.md)**
+
 ### 機能
 
 - ローカルネットワークを自動スキャンし、HardwareExporter を実行している Windows マシンを発見

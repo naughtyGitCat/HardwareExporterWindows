@@ -118,6 +118,8 @@ scrape_configs:
 
 **HardwareExporterWeb** is an optional companion service that provides automatic service discovery for Prometheus. It is **not related to metrics collection** - it only helps Prometheus automatically discover monitoring targets on your network.
 
+📖 **[Full Documentation](src/HardwareExporterWeb/README.md)**
+
 ### What It Does
 
 - Automatically scans your local network to discover Windows machines running HardwareExporter

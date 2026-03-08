@@ -118,6 +118,8 @@ scrape_configs:
 
 **HardwareExporterWeb** 是一个可选的配套服务，为 Prometheus 提供自动服务发现功能。它**与指标采集无关** - 只是帮助 Prometheus 自动发现网络中的监控目标。
 
+📖 **[完整文档](../src/HardwareExporterWeb/README.md)**
+
 ### 功能说明
 
 - 自动扫描本地网络，发现运行 HardwareExporter 的 Windows 机器
