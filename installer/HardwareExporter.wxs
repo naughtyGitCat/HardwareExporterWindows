@@ -11,8 +11,7 @@
            Compressed="yes"
            Scope="perMachine">
     
-    <SummaryInformation Description="Hardware Exporter Windows Service"
-                        Comments="Prometheus exporter for hardware metrics" />
+    <SummaryInformation Description="Hardware Exporter Windows Service" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
@@ -45,7 +44,7 @@
                   Return="check" />
 
     <InstallExecuteSequence>
-      <Custom Action="RunInstallScript" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="RunInstallScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
     </InstallExecuteSequence>
 
     <ui:WixUI Id="WixUI_Minimal" />
