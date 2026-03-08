@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Refactored `MetricsController` to use dependency injection
 - Improved metric name processing with better documentation
 - Made HTTPS redirection optional (disabled by default for internal networks)
-- Updated default port to 9182 (standard for Windows exporters)
+- Updated default port to 9888 (avoids conflict with windows_exporter on 9182)
 
 ### Fixed
 - Performance issue: Computer instance is now initialized once instead of on every request
@@ -37,7 +37,7 @@ All notable changes to this project will be documented in this file.
 Before merging, please test on Windows:
 
 1. ✅ Service starts successfully
-2. ✅ Metrics endpoint returns data: `http://localhost:9182/api/metrics`
+2. ✅ Metrics endpoint returns data: `http://localhost:9888/api/metrics`
 3. ✅ Configuration changes are respected (try disabling GPU monitoring)
 4. ✅ Service runs stably for extended period
 5. ✅ Memory usage remains stable (no leaks)

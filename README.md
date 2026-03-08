@@ -71,7 +71,7 @@ Edit `appsettings.json` to customize the exporter:
     "EnableStorage": true,
     "ScrapeIntervalSeconds": 15
   },
-  "Urls": "http://0.0.0.0:9182"
+  "Urls": "http://0.0.0.0:9888"
 }
 ```
 
@@ -97,8 +97,8 @@ scrape_configs:
   - job_name: 'windows-hardware'
     static_configs:
       - targets:
-          - '192.168.1.100:9182'  # Your Windows machine IP
-          - '192.168.1.101:9182'
+          - '192.168.1.100:9888'  # Your Windows machine IP
+          - '192.168.1.101:9888'
 ```
 
 ## Available Metrics
@@ -147,7 +147,7 @@ hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
 ### No metrics appearing
 
 1. Check if the service is running: `Get-Service HardwareExporter`
-2. Test the endpoint: `curl http://localhost:9182/api/metrics`
+2. Test the endpoint: `curl http://localhost:9888/api/metrics`
 3. Check logs in Event Viewer under "Application"
 
 ### Firewall issues
@@ -178,7 +178,7 @@ cd src/HardwareExporterWindows
 dotnet run
 ```
 
-Access metrics at: http://localhost:9182/api/metrics
+Access metrics at: http://localhost:9888/api/metrics
 
 ### Running Tests
 
