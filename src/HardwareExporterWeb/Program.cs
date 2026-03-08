@@ -1,8 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using HardwareExporterWeb.Services;
+using HardwareExporterWeb.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add configuration
+builder.Services.Configure<NetworkScanOptions>(
+    builder.Configuration.GetSection(NetworkScanOptions.SectionName));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
