@@ -44,7 +44,9 @@
                   Return="check" />
 
     <InstallExecuteSequence>
-      <Custom Action="RunInstallScript" After="InstallFiles"><![CDATA[NOT Installed]]></Custom>
+      <Custom Action="RunInstallScript" After="InstallFiles">
+        <Condition>NOT Installed</Condition>
+      </Custom>
     </InstallExecuteSequence>
 
     <ui:WixUI Id="WixUI_Minimal" />
