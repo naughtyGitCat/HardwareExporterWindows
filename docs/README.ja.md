@@ -114,6 +114,52 @@ scrape_configs:
           - '192.168.1.101:9888'
 ```
 
+## HardwareExporterWeb（オプションのサービスディスカバリー）
+
+**HardwareExporterWeb** は、Prometheus の自動サービスディスカバリー機能を提供するオプションのサービスです。**メトリクス収集とは無関係** で、Prometheus がネットワーク上の監視対象を自動的に発見するのを支援します。
+
+### 機能
+
+- ローカルネットワークを自動スキャンし、HardwareExporter を実行している Windows マシンを発見
+- Prometheus HTTP サービスディスカバリーエンドポイントを提供
+- `prometheus.yml` で各ターゲットを手動設定する必要がなくなります
+
+### インストール
+
+[最新リリース](https://github.com/naughtyGitCat/HardwareExporterWindows/releases) から `HardwareExporterWeb-win-x64.zip` をダウンロードし、ネットワーク内の任意のマシンで実行します（監視対象の各マシンにインストールする必要はありません）。
+
+### 設定
+
+`appsettings.json` を編集：
+
+```json
+{
+  "NetworkScan": {
+    "SubnetFilter": "",           // 空 = すべてのローカルサブネットをスキャン
+    "SubnetMask": "255.255.255.0" // サブネットマスク
+  }
+}
+```
+
+### サービスディスカバリーを使用した Prometheus 設定
+
+静的ターゲットの代わりに HTTP サービスディスカバリーを使用：
+
+```yaml
+scrape_configs:
+  - job_name: 'windows-hardware-auto'
+    http_sd_configs:
+      - url: 'http://your-web-server/api/ServiceDiscovery/HardwareExporter'
+        refresh_interval: 60s
+```
+
+### API エンドポイント
+
+- `/api/ServiceDiscovery/HardwareExporter` - HardwareExporter インスタンスを発見
+- `/api/ServiceDiscovery/WindowsExporter` - windows_exporter インスタンスを発見
+
+**注意：** これは完全にオプションです。静的設定を好む場合は、`prometheus.yml` で直接ターゲットを設定できます。
+
 ## 利用可能なメトリクス
 
 エクスポーターは2種類のメトリクスを提供します：

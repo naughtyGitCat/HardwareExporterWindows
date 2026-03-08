@@ -114,6 +114,52 @@ scrape_configs:
           - '192.168.1.101:9888'
 ```
 
+## HardwareExporterWeb (Optional Service Discovery)
+
+**HardwareExporterWeb** is an optional companion service that provides automatic service discovery for Prometheus. It is **not related to metrics collection** - it only helps Prometheus automatically discover monitoring targets on your network.
+
+### What It Does
+
+- Automatically scans your local network to discover Windows machines running HardwareExporter
+- Provides Prometheus HTTP Service Discovery endpoints
+- Eliminates the need to manually configure each target in `prometheus.yml`
+
+### Installation
+
+Download `HardwareExporterWeb-win-x64.zip` from the [latest release](https://github.com/naughtyGitCat/HardwareExporterWindows/releases) and run it on any machine in your network (doesn't need to be on every monitored machine).
+
+### Configuration
+
+Edit `appsettings.json`:
+
+```json
+{
+  "NetworkScan": {
+    "SubnetFilter": "",           // Empty = scan all local subnets
+    "SubnetMask": "255.255.255.0" // Subnet mask
+  }
+}
+```
+
+### Prometheus Configuration with Service Discovery
+
+Instead of static targets, use HTTP service discovery:
+
+```yaml
+scrape_configs:
+  - job_name: 'windows-hardware-auto'
+    http_sd_configs:
+      - url: 'http://your-web-server/api/ServiceDiscovery/HardwareExporter'
+        refresh_interval: 60s
+```
+
+### API Endpoints
+
+- `/api/ServiceDiscovery/HardwareExporter` - Discover HardwareExporter instances
+- `/api/ServiceDiscovery/WindowsExporter` - Discover windows_exporter instances
+
+**Note:** This is completely optional. You can use static configuration in `prometheus.yml` if you prefer.
+
 ## Available Metrics
 
 The exporter provides two types of metrics:

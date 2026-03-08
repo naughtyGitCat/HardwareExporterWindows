@@ -114,6 +114,52 @@ scrape_configs:
           - '192.168.1.101:9888'
 ```
 
+## HardwareExporterWeb（可选的服务发现）
+
+**HardwareExporterWeb** 是一个可选的配套服务，为 Prometheus 提供自动服务发现功能。它**与指标采集无关** - 只是帮助 Prometheus 自动发现网络中的监控目标。
+
+### 功能说明
+
+- 自动扫描本地网络，发现运行 HardwareExporter 的 Windows 机器
+- 提供 Prometheus HTTP 服务发现端点
+- 无需在 `prometheus.yml` 中手动配置每个目标
+
+### 安装
+
+从 [最新版本](https://github.com/naughtyGitCat/HardwareExporterWindows/releases) 下载 `HardwareExporterWeb-win-x64.zip`，在网络中的任意一台机器上运行即可（不需要在每台被监控机器上安装）。
+
+### 配置
+
+编辑 `appsettings.json`：
+
+```json
+{
+  "NetworkScan": {
+    "SubnetFilter": "",           // 空 = 扫描所有本地子网
+    "SubnetMask": "255.255.255.0" // 子网掩码
+  }
+}
+```
+
+### 使用服务发现的 Prometheus 配置
+
+使用 HTTP 服务发现代替静态目标：
+
+```yaml
+scrape_configs:
+  - job_name: 'windows-hardware-auto'
+    http_sd_configs:
+      - url: 'http://your-web-server/api/ServiceDiscovery/HardwareExporter'
+        refresh_interval: 60s
+```
+
+### API 端点
+
+- `/api/ServiceDiscovery/HardwareExporter` - 发现 HardwareExporter 实例
+- `/api/ServiceDiscovery/WindowsExporter` - 发现 windows_exporter 实例
+
+**注意：** 这是完全可选的功能。如果你更喜欢静态配置，可以直接在 `prometheus.yml` 中配置目标。
+
 ## 可用指标
 
 导出器提供两种类型的指标：
