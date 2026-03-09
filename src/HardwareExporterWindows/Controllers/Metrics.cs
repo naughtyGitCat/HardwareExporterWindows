@@ -122,8 +122,8 @@ public class MetricsController : ControllerBase
                 stream.Position = 0;
                 using var reader = new System.IO.StreamReader(stream);
                 var dotnetMetrics = await reader.ReadToEndAsync();
-                metricsBuilder.AppendLine(dotnetMetrics);
-                metricsBuilder.AppendLine(); // Add blank line separator
+                metricsBuilder.Append(dotnetMetrics);
+                metricsBuilder.Append("\n\n"); // Add blank line separator (Unix LF)
             }
             catch (Exception ex)
             {
@@ -229,9 +229,9 @@ public class MetricsController : ControllerBase
             labelsRendered = $"{{{labelsRendered}}}";
         }
         
-        // Output Prometheus format
-        metricsBuilder.AppendLine($"# HELP {metricName} Sensor: {sensor.Name}, Type: {sensor.SensorType}");
-        metricsBuilder.AppendLine($"# TYPE {metricName} gauge");
-        metricsBuilder.AppendLine($"{metricName}{labelsRendered} {sensor.Value}");
+        // Output Prometheus format (use Unix LF instead of Windows CRLF)
+        metricsBuilder.Append($"# HELP {metricName} Sensor: {sensor.Name}, Type: {sensor.SensorType}\n");
+        metricsBuilder.Append($"# TYPE {metricName} gauge\n");
+        metricsBuilder.Append($"{metricName}{labelsRendered} {sensor.Value}\n");
     }
 }
