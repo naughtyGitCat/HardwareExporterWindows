@@ -1,5 +1,13 @@
 # HardwareExporterWindows
 
+[![Build Status](https://github.com/naughtyGitCat/HardwareExporterWindows/actions/workflows/dotnet.yml/badge.svg)](https://github.com/naughtyGitCat/HardwareExporterWindows/actions/workflows/dotnet.yml)
+[![Release](https://img.shields.io/github/v/release/naughtyGitCat/HardwareExporterWindows)](https://github.com/naughtyGitCat/HardwareExporterWindows/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/naughtyGitCat/HardwareExporterWindows/total)](https://github.com/naughtyGitCat/HardwareExporterWindows/releases)
+[![License](https://img.shields.io/github/license/naughtyGitCat/HardwareExporterWindows)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)](https://dotnet.microsoft.com/)
+[![Platform](https://img.shields.io/badge/platform-Windows-0078D6)](https://www.microsoft.com/windows)
+[![Stars](https://img.shields.io/github/stars/naughtyGitCat/HardwareExporterWindows?style=social)](https://github.com/naughtyGitCat/HardwareExporterWindows/stargazers)
+
 [English](README.md) | [简体中文](docs/README.zh-CN.md) | [日本語](docs/README.ja.md)
 
 A Prometheus exporter for Windows hardware metrics using LibreHardwareMonitor.
