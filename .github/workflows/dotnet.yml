@@ -56,12 +56,25 @@ jobs:
             --self-contained true `
             -p:PublishSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true `
-            -o bin/publish/HardwareExporterWeb
+            -o bin/publish/HardwareExporterWeb-win-x64
+    
+    - name: Publish HardwareExporterWeb (Linux ARM64)
+      run: |
+          dotnet publish src/HardwareExporterWeb/HardwareExporterWeb.csproj `
+            -c Release `
+            -r linux-arm64 `
+            --self-contained true `
+            -o bin/publish/HardwareExporterWeb-linux-arm64
     
     - name: Create Archives
       run: |
           Compress-Archive -Path bin/publish/HardwareExporterWindows/* -DestinationPath HardwareExporterWindows-win-x64.zip
-          Compress-Archive -Path bin/publish/HardwareExporterWeb/* -DestinationPath HardwareExporterWeb-win-x64.zip
+          Compress-Archive -Path bin/publish/HardwareExporterWeb-win-x64/* -DestinationPath HardwareExporterWeb-win-x64.zip
+          
+          # Create tar.gz for Linux ARM64
+          cd bin/publish/HardwareExporterWeb-linux-arm64
+          tar -czf ../../../HardwareExporterWeb-linux-arm64.tar.gz *
+          cd ../../..
     
     - name: Setup WiX Toolset
       run: |
@@ -89,6 +102,7 @@ jobs:
           HardwareExporterWindows-win-x64.zip
           HardwareExporterWindows-win-x64.msi
           HardwareExporterWeb-win-x64.zip
+          HardwareExporterWeb-linux-arm64.tar.gz
         retention-days: 90
     
     - name: Generate Version Tag
@@ -120,7 +134,8 @@ jobs:
           ### Downloads
           - `HardwareExporterWindows-win-x64.msi` - **Windows Installer (Recommended)** - Automatic service installation
           - `HardwareExporterWindows-win-x64.zip` - Windows hardware exporter (standalone)
-          - `HardwareExporterWeb-win-x64.zip` - Web interface (standalone)
+          - `HardwareExporterWeb-win-x64.zip` - Web interface for Windows (standalone)
+          - `HardwareExporterWeb-linux-arm64.tar.gz` - Web interface for Linux ARM64 (standalone)
           
           ### Installation
           
@@ -141,6 +156,7 @@ jobs:
           HardwareExporterWindows-win-x64.msi
           HardwareExporterWindows-win-x64.zip
           HardwareExporterWeb-win-x64.zip
+          HardwareExporterWeb-linux-arm64.tar.gz
         draft: false
         prerelease: false
       env:
