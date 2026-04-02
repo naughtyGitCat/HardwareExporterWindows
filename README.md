@@ -12,6 +12,14 @@
 
 A Prometheus exporter for Windows hardware metrics using LibreHardwareMonitor.
 
+## Grafana Dashboard
+
+![Grafana Dashboard](docs/images/grafana-dashboard.png)
+
+A ready-to-use Grafana dashboard is included at [`docs/grafana-dashboard.json`](docs/grafana-dashboard.json). Import it via Grafana UI (Dashboards > Import > Upload JSON file).
+
+**Dashboard sections:** CPU Overview, CPU Temperature, CPU Power & Voltage, Fans, Memory, GPU (Temperature / Load / VRAM / Power / Clock / PCIe), Disk (Temperature / Space / Health / IO / Throughput), Network (Utilization / Throughput / Data Transferred).
+
 ## Why
 
 > windows_exporter's thermal zone data is not accurate

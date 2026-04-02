@@ -1,0 +1,3486 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "panels": [],
+      "title": "CPU Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 58,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_load_cpu_total{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Total Load",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 4,
+        "y": 1
+      },
+      "id": 59,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_load_cpu_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} C{{core}}",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_load_cpu_core_thread{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} C{{core}}T{{thread}}",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Per-Core Load",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 5500000000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 3000000000
+              },
+              {
+                "color": "red",
+                "value": 4500000000
+              }
+            ]
+          },
+          "unit": "rothz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 14,
+        "y": 1
+      },
+      "id": 60,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_clock_core{instance=~\"$instance\"} * 1000 * 1000",
+          "instant": true,
+          "legendFormat": "{{name}} C{{core}}",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_clock_cpu_core{instance=~\"$instance\"} * 1000 * 1000",
+          "instant": true,
+          "legendFormat": "{{name}} C{{core}}",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Per-Core Clock",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 61,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_load_cpu_total{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Total Load",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Load & Clock Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 3,
+      "panels": [],
+      "title": "CPU Temperature",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 105,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 65
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 4,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 12,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Core (Tctl/Tdie)",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_cpu_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Core#{{core}}",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_package{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Package",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_cpu_package{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Package",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_ccd1{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} CCD1",
+          "range": false,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_ccd2{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} CCD2",
+          "range": false,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_iod_hotspot{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} IOD Hotspot",
+          "range": false,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_l3{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} L3 ({{sensor_info}})",
+          "range": false,
+          "refId": "H"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_core_average{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Core Avg",
+          "range": false,
+          "refId": "I"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_core_max{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Core Max",
+          "range": false,
+          "refId": "J"
+        }
+      ],
+      "title": "CPU Temperature",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "panels": [],
+      "title": "CPU Power & Voltage",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 100
+              },
+              {
+                "color": "red",
+                "value": 180
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 15
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "background_solid",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_package{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Package",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_cpu_package{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Package",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "CPU Package Power",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 150
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 6,
+        "y": 15
+      },
+      "id": 41,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_core_power{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Cores",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_cpu_cores{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Cores",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_soc_power{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} SoC",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_misc_power{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Misc",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_cpu_memory{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Memory",
+          "range": false,
+          "refId": "E"
+        }
+      ],
+      "title": "CPU Power Breakdown",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "decimals": 3,
+          "mappings": [],
+          "max": 1.6,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1.3
+              },
+              {
+                "color": "red",
+                "value": 1.45
+              }
+            ]
+          },
+          "unit": "volt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 15
+      },
+      "id": 42,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_voltage_vddcr{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} VDDCR",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_voltage_vddcr_soc{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} VDDCR SoC",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_voltage_cpu_core{instance=~\"$instance\", core=\"\"}",
+          "instant": true,
+          "legendFormat": "{{name}} VCore",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_voltage_ldo_vdd{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} LDO VDD",
+          "range": false,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_voltage_vdd_misc{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} VDD Misc",
+          "range": false,
+          "refId": "E"
+        }
+      ],
+      "title": "CPU Voltage",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "repeat": "instance",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_core{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Core (Tctl)",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_cpu_core{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Core#{{core}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_package{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Package",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_cpu_package{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Package",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_ccd1{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} CCD1",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_ccd2{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} CCD2",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_temperature_iod_hotspot{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} IOD Hotspot",
+          "range": true,
+          "refId": "G"
+        }
+      ],
+      "title": "CPU Temperature Trend",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 43,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_package{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Package",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_cpu_package{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Package",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_core_power{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Cores",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_cpu_power_cpu_cores{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Cores",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "CPU Power Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "id": 7,
+      "panels": [],
+      "title": "Fans",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rotrpm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 28
+      },
+      "id": 10,
+      "maxPerRow": 4,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.0",
+      "repeat": "instance",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "AkmXYxd4z"
+          },
+          "editorMode": "code",
+          "expr": "hardware_motherboard_superio_fan{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{fan}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "$instance",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rotrpm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 34
+      },
+      "id": 29,
+      "maxPerRow": 2,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.0",
+      "repeat": "instance",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "AkmXYxd4z"
+          },
+          "editorMode": "code",
+          "expr": "hardware_motherboard_superio_fan{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{hostname}}_{{name}}_fan_{{fan}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "$instance",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 41
+      },
+      "panels": [],
+      "title": "Memory",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 42
+      },
+      "id": 44,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_load_memory{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} RAM",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_load_virtual_memory{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} Virtual",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Memory Usage",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 24
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "decgbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 18,
+        "x": 6,
+        "y": 42
+      },
+      "id": 45,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_data_memory_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} RAM Used",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_data_memory_available{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} RAM Available",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_data_virtual_memory_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} Virtual Used",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_data_virtual_memory_available{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{instance}} Virtual Available",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "title": "Memory Size (GB)",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "id": 46,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_load_memory{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{instance}} RAM %",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_memory_load_virtual_memory{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{instance}} Virtual %",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Memory Usage Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "panels": [],
+      "title": "GPU",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 90,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 30,
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_temperature_gpu_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Core",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_temperature_gpu_hot_spot{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Hot Spot",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_temperature_gpu_memory_junction{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Memory Junction",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_temperature_gpu_vr_soc{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - VR SoC",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "title": "GPU Temperature",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 62
+      },
+      "id": 31,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_gpu_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Core",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_d3d_3d{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - D3D 3D",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_gpu_memory_controller{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Memory Controller",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_gpu_video_engine{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Video Engine",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "title": "GPU Load",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 22528,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 16000
+              },
+              {
+                "color": "red",
+                "value": 20000
+              }
+            ]
+          },
+          "unit": "decmbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 62
+      },
+      "id": 32,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_smalldata_gpu_memory_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - VRAM Used",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_smalldata_d3d_dedicated_memory_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - D3D Dedicated",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_smalldata_d3d_shared_memory_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - D3D Shared",
+          "range": false,
+          "refId": "C"
+        }
+      ],
+      "title": "GPU VRAM Usage",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 150
+              },
+              {
+                "color": "red",
+                "value": 250
+              }
+            ]
+          },
+          "unit": "watt"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 68
+      },
+      "id": 33,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_power_gpu_package{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "GPU Power",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 500
+              },
+              {
+                "color": "yellow",
+                "value": 1500
+              }
+            ]
+          },
+          "unit": "rotmhz"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 68
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_clock_gpu_core{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Core",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_clock_gpu_memory{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - Memory",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "GPU Clock",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 500000
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 68
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_throughput_gpu_pcie_rx{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - PCIe RX",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_throughput_gpu_pcie_tx{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} - PCIe TX",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "GPU PCIe Throughput",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 74
+      },
+      "id": 36,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_gpu_core{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} - Core",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_d3d_3d{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} - D3D 3D",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_gpu_load_gpu_memory{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} - VRAM %",
+          "range": true,
+          "refId": "C"
+        }
+      ],
+      "title": "GPU Load Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 80
+      },
+      "id": 2,
+      "panels": [],
+      "title": "Disk",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 70,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 45
+              },
+              {
+                "color": "red",
+                "value": 55
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 81
+      },
+      "id": 47,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_temperature{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Disk Temperature",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 81
+      },
+      "id": 48,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_load_used_space{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Disk Used Space",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-RdYlGr"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 30
+              },
+              {
+                "color": "green",
+                "value": 70
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 81
+      },
+      "id": 49,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_level_available_spare{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Spare",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "100 - hardware_storage_level_percentage_used{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Life Left",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "SSD Health",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 87
+      },
+      "id": 50,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_load_total_activity{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Total",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_load_write_activity{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Write",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Disk IO Activity",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-blues"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 87
+      },
+      "id": 51,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_throughput_read_rate{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Read",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_throughput_write_rate{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Write",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Disk Throughput",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 100000
+              }
+            ]
+          },
+          "unit": "decgbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 87
+      },
+      "id": 52,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_data_written{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Written",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_data_read{instance=~\"$instance\"}",
+          "instant": true,
+          "legendFormat": "{{name}} Read",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Lifetime Data (TB)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 93
+      },
+      "id": 53,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_throughput_read_rate{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Read",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_storage_throughput_write_rate{instance=~\"$instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}} Write",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Disk IO Trend",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 99
+      },
+      "panels": [],
+      "title": "Network",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 100
+      },
+      "id": 54,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_load_network_utilization{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Network Utilization",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-blues"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 100
+      },
+      "id": 55,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_throughput_download_speed{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": true,
+          "legendFormat": "{{name}} ↓ Download",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_throughput_upload_speed{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": true,
+          "legendFormat": "{{name}} ↑ Upload",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Current Throughput",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1000
+              }
+            ]
+          },
+          "unit": "decgbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 106
+      },
+      "id": 56,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_data_downloaded{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": true,
+          "legendFormat": "{{name}} ↓ Downloaded",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_data_uploaded{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": true,
+          "legendFormat": "{{name}} ↑ Uploaded",
+          "range": false,
+          "refId": "B"
+        }
+      ],
+      "title": "Total Data Transferred (GB)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "effegg9curhmof"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 16,
+        "x": 8,
+        "y": 106
+      },
+      "id": 57,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_throughput_download_speed{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": false,
+          "legendFormat": "{{name}} ↓ Download",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "effegg9curhmof"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "hardware_network_throughput_upload_speed{instance=~\"$instance\",name!~\".*-.{3,}-\\\\d{4}\",name!~\".*内核调试.*\",name!~\"vSwitch.*\"} > 0",
+          "instant": false,
+          "legendFormat": "{{name}} ↑ Upload",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Network Throughput Trend",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": [
+            "10.100.100.12:5000",
+            "10.100.100.13:5000"
+          ],
+          "value": [
+            "10.100.100.12:5000",
+            "10.100.100.13:5000"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "effegg9curhmof"
+        },
+        "definition": "label_values(hardware_cpu_load_cpu_total,instance)",
+        "includeAll": true,
+        "label": "主机",
+        "multi": true,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(hardware_cpu_load_cpu_total,instance)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "WindowsHardware",
+  "uid": "cd476ab8-abae-4f7b-b04a-a3d3935a4211",
+  "weekStart": ""
+}
