@@ -12,6 +12,14 @@
 
 基于 LibreHardwareMonitor 的 Windows 硬件指标 Prometheus 导出器。
 
+## Grafana 仪表板
+
+![Grafana 仪表板](images/grafana-dashboard.png)
+
+项目附带了开箱即用的 Grafana 仪表板 [`docs/grafana-dashboard.json`](grafana-dashboard.json)，通过 Grafana 界面导入即可使用（仪表板 > 导入 > 上传 JSON 文件）。
+
+**仪表板包含：** CPU 概览、CPU 温度、CPU 功率与电压、风扇、内存、GPU（温度 / 负载 / 显存 / 功率 / 频率 / PCIe）、磁盘（温度 / 空间 / 健康度 / IO / 吞吐量）、网络（利用率 / 吞吐量 / 流量统计）。
+
 ## 为什么需要这个项目
 
 > windows_exporter 的温度区域数据不够准确

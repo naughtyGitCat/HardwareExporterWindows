@@ -12,6 +12,14 @@
 
 LibreHardwareMonitor を使用した Windows ハードウェアメトリクス用 Prometheus エクスポーター。
 
+## Grafana ダッシュボード
+
+![Grafana ダッシュボード](images/grafana-dashboard.png)
+
+すぐに使える Grafana ダッシュボードが [`docs/grafana-dashboard.json`](grafana-dashboard.json) に含まれています。Grafana UI からインポートできます（ダッシュボード > インポート > JSON ファイルをアップロード）。
+
+**ダッシュボードのセクション：** CPU 概要、CPU 温度、CPU 電力と電圧、ファン、メモリ、GPU（温度 / 負荷 / VRAM / 電力 / クロック / PCIe）、ディスク（温度 / 容量 / 健康状態 / IO / スループット）、ネットワーク（使用率 / スループット / データ転送量）。
+
 ## なぜこのプロジェクトが必要か
 
 > windows_exporter の温度ゾーンデータは正確ではありません
