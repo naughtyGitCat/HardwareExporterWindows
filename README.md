@@ -20,6 +20,42 @@ A ready-to-use Grafana dashboard is included at [`docs/grafana-dashboard.json`](
 
 **Dashboard sections:** CPU Overview, CPU Temperature, CPU Power & Voltage, Fans, Memory, GPU (Temperature / Load / VRAM / Power / Clock / PCIe), Disk (Temperature / Space / Health / IO / Throughput), Network (Utilization / Throughput / Data Transferred).
 
+## SMART (S.M.A.R.T. disk attributes)
+
+LibreHardwareMonitor cannot read SMART data from disks attached behind SAS HBAs (LSI/Avago, Adaptec, etc.) because those disks appear as SCSI devices and require SAT (SCSI/ATA Translation) pass-through that the library does not implement. To cover that gap, this exporter bundles [`smartctl`](https://www.smartmontools.org/) and emits a parallel set of metrics under the `hardware_storage_smart_*` prefix.
+
+Bundled binaries live in `<install-dir>\smartctl\` (≈1.4 MB total). They are invoked as a separate process; smartmontools is GPLv2+ and is included as a separate, unmodified executable. See `smartctl\COPYING.txt` and `smartctl\README.txt` for full attribution.
+
+To use a different `smartctl.exe` (e.g. a newer version), set `SmartMonitor:SmartctlPath` in `appsettings.json`. To disable the SMART collector entirely, set `SmartMonitor:Enable` to `false`.
+
+### SMART metric examples
+
+```
+# Drive temperature, including SAS HBA-attached SATA disks
+hardware_storage_smart_temperature_celsius{device="/dev/sda", model="WDC  WUH721816ALE6L4", serial="3HGHU16P", protocol="ata", firmware="PCGNW232"} 34
+
+# Overall self-assessment (1 = passed, 0 = failed)
+hardware_storage_smart_health_passed{device="/dev/sda", ...} 1
+
+# ATA SMART attribute table (per-id)
+hardware_storage_smart_ata_attribute_raw{device="/dev/sda", ..., id="5", name="Reallocated_Sector_Ct"} 0
+hardware_storage_smart_ata_attribute_raw{device="/dev/sda", ..., id="9", name="Power_On_Hours"} 31120
+
+# NVMe-specific
+hardware_storage_smart_nvme_percentage_used{device="/dev/sdi", model="SAMSUNG MZWLL3T2HAJQ-00005", ...} 6
+hardware_storage_smart_nvme_media_errors{device="/dev/sdi", ...} 0
+```
+
+### SMART configuration
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `SmartMonitor:Enable` | bool | true | Enable the SMART collector |
+| `SmartMonitor:SmartctlPath` | string | `""` | Override smartctl.exe path (empty = bundled) |
+| `SmartMonitor:RefreshIntervalSeconds` | int | 60 | How often to re-poll smartctl. Refresh is asynchronous; `/metrics` always serves the most recent cached snapshot, so Prometheus scrape latency is unaffected. Note: reading SMART can wake idle HDDs, so don't set this too aggressively. |
+| `SmartMonitor:InvocationTimeoutSeconds` | int | 15 | Per-disk timeout for a single smartctl call |
+| `SmartMonitor:DeviceExcludePatterns` | string[] | `[]` | Glob patterns matched against `/dev/sdN` names; matching devices are skipped |
+
 ## Why
 
 > windows_exporter's thermal zone data is not accurate

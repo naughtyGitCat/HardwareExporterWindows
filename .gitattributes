@@ -1,0 +1,4 @@
+# Bundled smartmontools files: keep upstream line endings, do not convert.
+# smartctl.exe is binary; the text files are upstream-provided and we ship them as-is.
+src/HardwareExporterWindows/smartctl/* -text
+src/HardwareExporterWindows/smartctl/smartctl.exe binary

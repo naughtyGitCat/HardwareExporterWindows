@@ -21,4 +21,8 @@
 		<None Include="install.ps1" CopyToPublishDirectory="PreserveNewest" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Include="smartctl\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+	</ItemGroup>
+
 </Project>

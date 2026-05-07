@@ -18,10 +18,13 @@
 
     <Feature Id="ProductFeature" Title="Hardware Exporter" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="SmartmontoolsComponents" />
     </Feature>
 
     <StandardDirectory Id="ProgramFilesFolder">
-      <Directory Id="INSTALLFOLDER" Name="HardwareExporter" />
+      <Directory Id="INSTALLFOLDER" Name="HardwareExporter">
+        <Directory Id="SmartctlDir" Name="smartctl" />
+      </Directory>
     </StandardDirectory>
 
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
@@ -33,6 +36,30 @@
       </Component>
       <Component Id="InstallScriptFile">
         <File Source="$(var.SourceDir)\install.ps1" />
+      </Component>
+    </ComponentGroup>
+
+    <!--
+      smartmontools (smartctl.exe + drivedb.h) is GPLv2+. It is bundled here as
+      a separate, unmodified executable in its own subdirectory ("mere
+      aggregation") and is invoked by HardwareExporter only as a child process.
+      smartmontools' own LICENSE/AUTHORS travel with it in this subdirectory.
+    -->
+    <ComponentGroup Id="SmartmontoolsComponents" Directory="SmartctlDir">
+      <Component Id="SmartctlExe">
+        <File Source="$(var.SourceDir)\smartctl\smartctl.exe" />
+      </Component>
+      <Component Id="SmartctlDriveDb">
+        <File Source="$(var.SourceDir)\smartctl\drivedb.h" />
+      </Component>
+      <Component Id="SmartctlLicense">
+        <File Source="$(var.SourceDir)\smartctl\COPYING.txt" />
+      </Component>
+      <Component Id="SmartctlAuthors">
+        <File Source="$(var.SourceDir)\smartctl\AUTHORS.txt" />
+      </Component>
+      <Component Id="SmartctlReadme">
+        <File Source="$(var.SourceDir)\smartctl\README.txt" />
       </Component>
     </ComponentGroup>
 

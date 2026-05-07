@@ -12,13 +12,16 @@ public class MetricsController : ControllerBase
 {
     private readonly ILogger<MetricsController> _logger;
     private readonly HardwareMonitorService _hardwareMonitor;
+    private readonly SmartMonitorService _smartMonitor;
 
     public MetricsController(
         ILogger<MetricsController> logger,
-        HardwareMonitorService hardwareMonitor)
+        HardwareMonitorService hardwareMonitor,
+        SmartMonitorService smartMonitor)
     {
         _logger = logger;
         _hardwareMonitor = hardwareMonitor;
+        _smartMonitor = smartMonitor;
     }
 
     /// <summary>
@@ -168,7 +171,9 @@ public class MetricsController : ControllerBase
             {
                 ProcessHardware(hardware, metricsBuilder, emittedMetrics);
             }
-            
+
+            EmitSmartMetrics(_smartMonitor.GetSnapshots(), metricsBuilder, emittedMetrics);
+
             var result = metricsBuilder.ToString();
             _logger.LogDebug("Metrics collection completed, {Size} bytes", result.Length);
             
@@ -271,5 +276,164 @@ public class MetricsController : ControllerBase
         }
         // Output Prometheus format (use Unix LF instead of Windows CRLF)
         metricsBuilder.Append($"{metricName}{labelsRendered} {sensor.Value}\n");
+    }
+
+    private static string EscapeLabel(string v) =>
+        v.Replace("\\", "\\\\").Replace("\"", "\\\"").Replace("\n", "\\n");
+
+    private static void EmitSmartLine(
+        System.Text.StringBuilder sb,
+        HashSet<string> emitted,
+        string name,
+        string help,
+        IDictionary<string, string> labels,
+        double value)
+    {
+        if (emitted.Add(name))
+        {
+            sb.Append($"# HELP {name} {help}\n");
+            sb.Append($"# TYPE {name} gauge\n");
+        }
+        var labelStr = string.Join(", ",
+            labels.Select(kv => $"{kv.Key}=\"{EscapeLabel(kv.Value)}\""));
+        sb.Append($"{name}{{{labelStr}}} {value}\n");
+    }
+
+    private void EmitSmartMetrics(
+        IReadOnlyCollection<HardwareExporterWindows.Services.SmartctlReport> reports,
+        System.Text.StringBuilder sb,
+        HashSet<string> emitted)
+    {
+        if (reports.Count == 0) return;
+
+        const string Prefix = "hardware_storage_smart";
+
+        foreach (var r in reports)
+        {
+            var protocol = string.IsNullOrEmpty(r.Protocol) ? "unknown" : r.Protocol.ToLowerInvariant();
+            var baseLabels = new Dictionary<string, string>
+            {
+                ["device"] = r.DeviceName,
+                ["model"] = r.ModelName,
+                ["serial"] = r.SerialNumber,
+                ["protocol"] = protocol,
+                ["firmware"] = r.FirmwareVersion,
+            };
+
+            EmitSmartLine(sb, emitted, $"{Prefix}_exit_status",
+                "smartctl exit status (bit field; 0 = clean, see smartctl(8))",
+                baseLabels, r.ExitStatus);
+
+            if (r.HealthPassed.HasValue)
+            {
+                EmitSmartLine(sb, emitted, $"{Prefix}_health_passed",
+                    "1 if smartctl overall-health self-assessment passed",
+                    baseLabels, r.HealthPassed.Value ? 1 : 0);
+            }
+            if (r.TemperatureCurrent.HasValue)
+            {
+                EmitSmartLine(sb, emitted, $"{Prefix}_temperature_celsius",
+                    "Drive temperature in Celsius",
+                    baseLabels, r.TemperatureCurrent.Value);
+            }
+            if (r.PowerOnHours.HasValue)
+            {
+                EmitSmartLine(sb, emitted, $"{Prefix}_power_on_hours",
+                    "Power-on hours",
+                    baseLabels, r.PowerOnHours.Value);
+            }
+            if (r.PowerCycleCount.HasValue)
+            {
+                EmitSmartLine(sb, emitted, $"{Prefix}_power_cycle_count",
+                    "Power cycle count",
+                    baseLabels, r.PowerCycleCount.Value);
+            }
+            if (r.CapacityBytes.HasValue)
+            {
+                EmitSmartLine(sb, emitted, $"{Prefix}_capacity_bytes",
+                    "User capacity in bytes",
+                    baseLabels, r.CapacityBytes.Value);
+            }
+
+            if (r.AtaAttributes != null)
+            {
+                foreach (var attr in r.AtaAttributes)
+                {
+                    var attrLabels = new Dictionary<string, string>(baseLabels)
+                    {
+                        ["id"] = attr.Id.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["name"] = attr.Name,
+                    };
+                    EmitSmartLine(sb, emitted, $"{Prefix}_ata_attribute_value",
+                        "ATA SMART attribute current normalized value (0-255)",
+                        attrLabels, attr.Value);
+                    EmitSmartLine(sb, emitted, $"{Prefix}_ata_attribute_worst",
+                        "ATA SMART attribute worst-ever normalized value",
+                        attrLabels, attr.Worst);
+                    EmitSmartLine(sb, emitted, $"{Prefix}_ata_attribute_threshold",
+                        "ATA SMART attribute threshold below which the drive is considered failing",
+                        attrLabels, attr.Threshold);
+                    EmitSmartLine(sb, emitted, $"{Prefix}_ata_attribute_raw",
+                        "ATA SMART attribute raw value",
+                        attrLabels, attr.Raw);
+                }
+            }
+
+            if (r.NvmeHealth is { } nvme)
+            {
+                if (nvme.CriticalWarning.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_critical_warning",
+                        "NVMe critical warning bitfield (0 = no warning)",
+                        baseLabels, nvme.CriticalWarning.Value);
+                if (nvme.AvailableSpare.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_available_spare_percent",
+                        "NVMe available spare blocks (percent)",
+                        baseLabels, nvme.AvailableSpare.Value);
+                if (nvme.AvailableSpareThreshold.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_available_spare_threshold_percent",
+                        "NVMe available spare threshold (percent)",
+                        baseLabels, nvme.AvailableSpareThreshold.Value);
+                if (nvme.PercentageUsed.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_percentage_used",
+                        "NVMe estimated percentage of life used",
+                        baseLabels, nvme.PercentageUsed.Value);
+                if (nvme.DataUnitsRead.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_data_units_read",
+                        "NVMe data units read (each = 1000 * 512 bytes)",
+                        baseLabels, nvme.DataUnitsRead.Value);
+                if (nvme.DataUnitsWritten.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_data_units_written",
+                        "NVMe data units written (each = 1000 * 512 bytes)",
+                        baseLabels, nvme.DataUnitsWritten.Value);
+                if (nvme.HostReads.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_host_reads",
+                        "NVMe number of host read commands",
+                        baseLabels, nvme.HostReads.Value);
+                if (nvme.HostWrites.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_host_writes",
+                        "NVMe number of host write commands",
+                        baseLabels, nvme.HostWrites.Value);
+                if (nvme.MediaErrors.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_media_errors",
+                        "NVMe number of unrecovered data integrity errors",
+                        baseLabels, nvme.MediaErrors.Value);
+                if (nvme.NumErrLogEntries.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_num_err_log_entries",
+                        "NVMe number of error information log entries",
+                        baseLabels, nvme.NumErrLogEntries.Value);
+                if (nvme.UnsafeShutdowns.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_unsafe_shutdowns",
+                        "NVMe unsafe shutdown count",
+                        baseLabels, nvme.UnsafeShutdowns.Value);
+                if (nvme.WarningTempTime.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_warning_temp_time_minutes",
+                        "NVMe minutes spent above warning composite temperature",
+                        baseLabels, nvme.WarningTempTime.Value);
+                if (nvme.CriticalCompTime.HasValue)
+                    EmitSmartLine(sb, emitted, $"{Prefix}_nvme_critical_comp_time_minutes",
+                        "NVMe minutes spent above critical composite temperature",
+                        baseLabels, nvme.CriticalCompTime.Value);
+            }
+        }
     }
 }
