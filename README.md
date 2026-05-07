@@ -151,7 +151,7 @@ Edit `appsettings.json` to customize the exporter:
 | `EnableController` | bool | true | Monitor Controller metrics |
 | `EnableNetwork` | bool | true | Monitor Network metrics |
 | `EnableStorage` | bool | true | Monitor Storage metrics |
-| `ScrapeIntervalSeconds` | int | 15 | Update interval (not used yet) |
+| `ScrapeIntervalSeconds` | int | 15 | How often the background loop calls `Update()` on the hardware monitor. `/metrics` always serves the most recent cached snapshot, so this controls hardware-poll frequency, not Prometheus scrape latency. Lower = fresher data; higher = idle AHCI HDDs can actually spin down (each `Update()` issues ATA SMART pass-through to those disks). |
 
 ## Prometheus Configuration
 

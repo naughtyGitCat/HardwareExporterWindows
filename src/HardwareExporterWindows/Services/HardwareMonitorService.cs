@@ -14,6 +14,8 @@ public class HardwareMonitorService : IHostedService, IDisposable
     private readonly HardwareMonitorOptions _options;
     private Computer? _computer;
     private readonly SemaphoreSlim _updateLock = new(1, 1);
+    private readonly CancellationTokenSource _stopCts = new();
+    private Task? _refreshTask;
 
     public HardwareMonitorService(
         ILogger<HardwareMonitorService> logger,
@@ -28,7 +30,7 @@ public class HardwareMonitorService : IHostedService, IDisposable
         try
         {
             _logger.LogInformation("Initializing hardware monitor...");
-            
+
             _computer = new Computer
             {
                 IsCpuEnabled = _options.EnableCpu,
@@ -41,13 +43,18 @@ public class HardwareMonitorService : IHostedService, IDisposable
             };
 
             _computer.Open();
-            
+
             _logger.LogInformation(
                 "Hardware monitor initialized. Enabled: CPU={Cpu}, GPU={Gpu}, Memory={Memory}, " +
                 "Motherboard={Motherboard}, Controller={Controller}, Network={Network}, Storage={Storage}",
                 _options.EnableCpu, _options.EnableGpu, _options.EnableMemory,
-                _options.EnableMotherboard, _options.EnableController, 
+                _options.EnableMotherboard, _options.EnableController,
                 _options.EnableNetwork, _options.EnableStorage);
+
+            // Background refresh loop. Decoupling Update() from /metrics scrape avoids
+            // re-issuing SMART/ATA pass-through commands on every Prometheus scrape, which
+            // wakes up idle HDDs on hosts with AHCI-attached SATA drives.
+            _refreshTask = Task.Run(() => RefreshLoopAsync(_stopCts.Token));
 
             return Task.CompletedTask;
         }
@@ -58,25 +65,22 @@ public class HardwareMonitorService : IHostedService, IDisposable
         }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        try
+        _logger.LogInformation("Stopping hardware monitor...");
+        _stopCts.Cancel();
+        if (_refreshTask != null)
         {
-            _logger.LogInformation("Stopping hardware monitor...");
-            _computer?.Close();
-            _logger.LogInformation("Hardware monitor stopped");
-            return Task.CompletedTask;
+            try { await _refreshTask.WaitAsync(cancellationToken); }
+            catch (OperationCanceledException) { }
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error while stopping hardware monitor");
-            throw;
-        }
+        _computer?.Close();
+        _logger.LogInformation("Hardware monitor stopped");
     }
 
     /// <summary>
-    /// Update all hardware sensors
-    /// Thread-safe operation
+    /// Update all hardware sensors. Normally driven by the background refresh loop;
+    /// exposed publicly for the first-scrape warmup path and for tests.
     /// </summary>
     public async Task UpdateAsync()
     {
@@ -96,6 +100,26 @@ public class HardwareMonitorService : IHostedService, IDisposable
         }
     }
 
+    private async Task RefreshLoopAsync(CancellationToken ct)
+    {
+        // Eager first refresh so the very first /metrics scrape after startup has data.
+        try { await UpdateAsync(); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Initial hardware refresh failed"); }
+
+        var interval = TimeSpan.FromSeconds(Math.Max(1, _options.ScrapeIntervalSeconds));
+        using var timer = new PeriodicTimer(interval);
+        try
+        {
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                try { await UpdateAsync(); }
+                catch (OperationCanceledException) { throw; }
+                catch (Exception ex) { _logger.LogWarning(ex, "Hardware refresh cycle failed"); }
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+
     /// <summary>
     /// Get the Computer instance
     /// </summary>
@@ -110,6 +134,8 @@ public class HardwareMonitorService : IHostedService, IDisposable
 
     public void Dispose()
     {
+        _stopCts.Cancel();
+        _stopCts.Dispose();
         _computer?.Close();
         _updateLock.Dispose();
     }

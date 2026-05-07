@@ -161,9 +161,10 @@ public class MetricsController : ControllerBase
                 _logger.LogWarning(ex, "Failed to collect .NET runtime metrics, continuing with hardware metrics only");
             }
             
-            // Then, collect hardware metrics
-            await _hardwareMonitor.UpdateAsync();
-
+            // Hardware sensors are kept fresh by HardwareMonitorService's background
+            // refresh loop. We deliberately do NOT call UpdateAsync here: Update() issues
+            // ATA SMART pass-through commands on AHCI-attached HDDs, and tying that to
+            // every Prometheus scrape would prevent idle disks from spinning down.
             var computer = _hardwareMonitor.GetComputer();
             var emittedMetrics = new HashSet<string>();
 
