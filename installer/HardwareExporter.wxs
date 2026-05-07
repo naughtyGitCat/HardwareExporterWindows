@@ -1,72 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  
-  <Package Name="Hardware Exporter" 
-           Language="1033" 
-           Version="1.0.0.0" 
-           Manufacturer="Hardware Exporter" 
+
+  <!--
+    ProductVersion is supplied by CI (-d ProductVersion=1.0.<run_number>.0).
+    Falls back to 1.0.0.0 for local wix invocations without -d.
+  -->
+  <?define ProductVersion="1.0.0.0" ?>
+
+  <Package Name="Hardware Exporter"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="Hardware Exporter"
            UpgradeCode="A1B2C3D4-E5F6-4A5B-8C9D-0E1F2A3B4C5D"
            InstallerVersion="200"
            Compressed="yes"
            Scope="perMachine">
-    
+
     <SummaryInformation Description="Hardware Exporter Windows Service" />
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <!--
+      AllowSameVersionUpgrades=yes is defense-in-depth so two MSIs with the
+      same Version don't accumulate as separate registered products in the
+      Windows Installer registry (which we hit on .11 and .13: three orphan
+      ProductCodes each, all v1.0.0.0). With CI now producing a unique
+      Version per build this should be moot, but it's a cheap safety net.
+    -->
+    <MajorUpgrade
+        AllowSameVersionUpgrades="yes"
+        DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
     <Feature Id="ProductFeature" Title="Hardware Exporter" Level="1">
-      <ComponentGroupRef Id="ProductComponents" />
-      <ComponentGroupRef Id="SmartmontoolsComponents" />
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="AppSettings" />
+      <ComponentRef Id="InstallScriptFile" />
+      <ComponentRef Id="SmartctlExe" />
+      <ComponentRef Id="SmartctlDriveDb" />
+      <ComponentRef Id="SmartctlLicense" />
+      <ComponentRef Id="SmartctlAuthors" />
+      <ComponentRef Id="SmartctlReadme" />
     </Feature>
 
+    <!--
+      Canonical nested-Directory layout: each <Component> sits inside the
+      <Directory> it should install to. This is the form that's worked
+      reliably across WiX v3 → v5; we hit "files end up in INSTALLFOLDER
+      regardless of intent" with both ComponentGroup-level and
+      Component-level Directory= attributes in WiX v4.
+    -->
     <StandardDirectory Id="ProgramFilesFolder">
       <Directory Id="INSTALLFOLDER" Name="HardwareExporter">
-        <Directory Id="SmartctlDir" Name="smartctl" />
+        <Component Id="MainExecutable">
+          <File Source="$(var.SourceDir)\HardwareExporterWindows.exe" />
+        </Component>
+        <Component Id="AppSettings">
+          <File Source="$(var.SourceDir)\appsettings.json" />
+        </Component>
+        <Component Id="InstallScriptFile">
+          <File Source="$(var.SourceDir)\install.ps1" />
+        </Component>
+
+        <!--
+          smartmontools (GPLv2+) is bundled here as a separate, unmodified
+          executable in its own subdirectory ("mere aggregation") and is
+          invoked by HardwareExporter only as a child process. Its own
+          LICENSE / AUTHORS travel with it in this subdirectory.
+        -->
+        <Directory Id="SmartctlDir" Name="smartctl">
+          <Component Id="SmartctlExe">
+            <File Source="$(var.SourceDir)\smartctl\smartctl.exe" />
+          </Component>
+          <Component Id="SmartctlDriveDb">
+            <File Source="$(var.SourceDir)\smartctl\drivedb.h" />
+          </Component>
+          <Component Id="SmartctlLicense">
+            <File Source="$(var.SourceDir)\smartctl\COPYING.txt" />
+          </Component>
+          <Component Id="SmartctlAuthors">
+            <File Source="$(var.SourceDir)\smartctl\AUTHORS.txt" />
+          </Component>
+          <Component Id="SmartctlReadme">
+            <File Source="$(var.SourceDir)\smartctl\README.txt" />
+          </Component>
+        </Directory>
       </Directory>
     </StandardDirectory>
-
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="MainExecutable">
-        <File Source="$(var.SourceDir)\HardwareExporterWindows.exe" />
-      </Component>
-      <Component Id="AppSettings">
-        <File Source="$(var.SourceDir)\appsettings.json" />
-      </Component>
-      <Component Id="InstallScriptFile">
-        <File Source="$(var.SourceDir)\install.ps1" />
-      </Component>
-    </ComponentGroup>
-
-    <!--
-      smartmontools (smartctl.exe + drivedb.h) is GPLv2+. It is bundled here as
-      a separate, unmodified executable in its own subdirectory ("mere
-      aggregation") and is invoked by HardwareExporter only as a child process.
-      smartmontools' own LICENSE/AUTHORS travel with it in this subdirectory.
-
-      Directory= is set on each Component explicitly because in WiX v4 the
-      Directory attribute on ComponentGroup is not always honored when the
-      Components contain unkeyed File elements; per-Component is the
-      reliable way to land files in the smartctl\ subfolder.
-    -->
-    <ComponentGroup Id="SmartmontoolsComponents">
-      <Component Id="SmartctlExe" Directory="SmartctlDir">
-        <File Source="$(var.SourceDir)\smartctl\smartctl.exe" />
-      </Component>
-      <Component Id="SmartctlDriveDb" Directory="SmartctlDir">
-        <File Source="$(var.SourceDir)\smartctl\drivedb.h" />
-      </Component>
-      <Component Id="SmartctlLicense" Directory="SmartctlDir">
-        <File Source="$(var.SourceDir)\smartctl\COPYING.txt" />
-      </Component>
-      <Component Id="SmartctlAuthors" Directory="SmartctlDir">
-        <File Source="$(var.SourceDir)\smartctl\AUTHORS.txt" />
-      </Component>
-      <Component Id="SmartctlReadme" Directory="SmartctlDir">
-        <File Source="$(var.SourceDir)\smartctl\README.txt" />
-      </Component>
-    </ComponentGroup>
 
     <CustomAction Id="RunInstallScript"
                   Directory="INSTALLFOLDER"
