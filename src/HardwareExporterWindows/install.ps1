@@ -20,13 +20,23 @@ if (-not (Test-Path $TargetPath))
 	New-Item $TargetPath -ItemType Directory
  }
 
-# get script path all files
-$Files = Get-ChildItem $ScriptPath -Recurse -Include *
-
-Write-Host "copy files to target path"
-foreach ($File in $Files) {
-	Write-Host "copy " $File.Name " to target path"
-    Copy-Item $File.FullName $TargetPath -Force
+# Copy files only when this script is run from a separate (zip-extracted)
+# directory. When invoked as a CustomAction from the MSI, the working
+# directory is already TargetPath and MSI has placed files in their proper
+# subdirectories — re-copying with a non-recursive Copy-Item flattens the
+# tree and breaks bundled smartctl\.
+if ((Resolve-Path $ScriptPath).Path -ne (Resolve-Path $TargetPath).Path) {
+    Write-Host "copy files to target path"
+    $Files = Get-ChildItem $ScriptPath -Recurse -File
+    foreach ($File in $Files) {
+        $relative = $File.FullName.Substring($ScriptPath.Length).TrimStart('\','/')
+        $dst = Join-Path $TargetPath $relative
+        $dstDir = Split-Path $dst -Parent
+        if (-not (Test-Path $dstDir)) { New-Item -ItemType Directory -Path $dstDir -Force | Out-Null }
+        Copy-Item $File.FullName $dst -Force
+    }
+} else {
+    Write-Host "files are already in target path (MSI install); skipping copy"
 }
 
 # set service name and get service

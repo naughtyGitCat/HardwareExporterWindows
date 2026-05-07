@@ -4,9 +4,13 @@
 
   <!--
     ProductVersion is supplied by CI (-d ProductVersion=1.0.<run_number>.0).
-    Falls back to 1.0.0.0 for local wix invocations without -d.
+    Falls back to 1.0.0.0 for local wix invocations without -d. The
+    <?ifndef?> guard is required: WiX processes <?define?> AFTER -d, so an
+    unconditional define would clobber the CLI value (warning WIX1118).
   -->
-  <?define ProductVersion="1.0.0.0" ?>
+  <?ifndef ProductVersion ?>
+    <?define ProductVersion="1.0.0.0" ?>
+  <?endif ?>
 
   <Package Name="Hardware Exporter"
            Language="1033"
