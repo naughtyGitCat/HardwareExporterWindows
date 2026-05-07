@@ -272,6 +272,10 @@ public class SmartctlInvoker
         var exeDir = AppContext.BaseDirectory;
         var bundled = Path.Combine(exeDir, "smartctl", "smartctl.exe");
         if (File.Exists(bundled)) return bundled;
+        // Defense in depth: if a bad MSI lands smartctl.exe directly in INSTALLFOLDER
+        // instead of the smartctl\ subfolder, still find it.
+        var sideBySide = Path.Combine(exeDir, "smartctl.exe");
+        if (File.Exists(sideBySide)) return sideBySide;
 
         var pathEnv = Environment.GetEnvironmentVariable("PATH");
         if (!string.IsNullOrEmpty(pathEnv))
