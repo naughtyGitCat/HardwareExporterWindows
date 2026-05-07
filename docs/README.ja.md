@@ -4,7 +4,7 @@
 [![リリース](https://img.shields.io/github/v/release/naughtyGitCat/HardwareExporterWindows)](https://github.com/naughtyGitCat/HardwareExporterWindows/releases/latest)
 [![ダウンロード](https://img.shields.io/github/downloads/naughtyGitCat/HardwareExporterWindows/total)](https://github.com/naughtyGitCat/HardwareExporterWindows/releases)
 [![ライセンス](https://img.shields.io/github/license/naughtyGitCat/HardwareExporterWindows)](../LICENSE)
-[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)](https://dotnet.microsoft.com/)
 [![プラットフォーム](https://img.shields.io/badge/プラットフォーム-Windows-0078D6)](https://www.microsoft.com/windows)
 [![Stars](https://img.shields.io/github/stars/naughtyGitCat/HardwareExporterWindows?style=social)](https://github.com/naughtyGitCat/HardwareExporterWindows/stargazers)
 

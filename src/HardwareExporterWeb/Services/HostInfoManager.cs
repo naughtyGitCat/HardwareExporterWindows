@@ -114,29 +114,38 @@ public class HostInfoManager
     public void DeleteHostInfo(string hostIP)
     {
         using var database = GetDatabase();
-        database.DeleteWhere<HostInfo>($"HostIP = {hostIP}");
+        database.DeleteWhere<HostInfoEntity>("HostIP = @0", hostIP);
     }
 
     public void UpdateHostInfo(string hostIP, string? hostName, int? windowsExporterPort, int? hardwareExporterPort)
     {
-        using var database = GetDatabase();
         if (hostName is null && windowsExporterPort is null && hardwareExporterPort is null) return;
-        var setClause = $" UpdateTimestamp = {new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds()}";
+
+        var setClauses = new List<string> { "UpdateTimestamp = @0" };
+        var args = new List<object> { new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() };
+
         if (hostName != null)
         {
-            setClause += $" , HostName = '{hostName}'";
+            setClauses.Add($"HostName = @{args.Count}");
+            args.Add(hostName);
         }
         if (windowsExporterPort != null)
         {
-            setClause += $" , WindowsExporterPort = {windowsExporterPort}";
+            setClauses.Add($"WindowsExporterPort = @{args.Count}");
+            args.Add(windowsExporterPort);
         }
         if (hardwareExporterPort != null)
         {
-            setClause += $" , HardwareExporterPort = {hardwareExporterPort}";
+            setClauses.Add($"HardwareExporterPort = @{args.Count}");
+            args.Add(hardwareExporterPort);
         }
-        var sql = @$"UPDATE HostInfo SET {setClause} WHERE HostIP = '{hostIP}'";
-        _logger.LogInformation("update sql: {sql}",sql);
-        database.Execute(sql);
+
+        var sql = $"UPDATE HostInfo SET {string.Join(", ", setClauses)} WHERE HostIP = @{args.Count}";
+        args.Add(hostIP);
+
+        _logger.LogInformation("update sql: {sql}", sql);
+        using var database = GetDatabase();
+        database.Execute(sql, args.ToArray());
     }
 
 }
