@@ -2544,11 +2544,10 @@
             "uid": "effegg9curhmof"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "hardware_storage_temperature{instance=~\"$instance\"}",
-          "instant": true,
-          "legendFormat": "{{name}}",
-          "range": false,
+          "expr": "hardware_storage_smart_temperature_celsius{instance=~\"$instance\"}",
+          "format": "time_series",
+          "legendFormat": "{{device}} {{model}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -2694,11 +2693,10 @@
             "uid": "effegg9curhmof"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "hardware_storage_level_available_spare{instance=~\"$instance\"}",
-          "instant": true,
-          "legendFormat": "{{name}} Spare",
-          "range": false,
+          "expr": "hardware_storage_smart_nvme_available_spare_percent{instance=~\"$instance\"}",
+          "format": "time_series",
+          "legendFormat": "{{model}} Spare",
+          "range": true,
           "refId": "A"
         },
         {
@@ -2707,11 +2705,10 @@
             "uid": "effegg9curhmof"
           },
           "editorMode": "code",
-          "exemplar": false,
-          "expr": "100 - hardware_storage_level_percentage_used{instance=~\"$instance\"}",
-          "instant": true,
-          "legendFormat": "{{name}} Life Left",
-          "range": false,
+          "expr": "100 - hardware_storage_smart_nvme_percentage_used{instance=~\"$instance\"}",
+          "format": "time_series",
+          "legendFormat": "{{model}} Life Left",
+          "range": true,
           "refId": "B"
         }
       ],
