@@ -56,6 +56,35 @@ hardware_storage_smart_nvme_media_errors{device="/dev/sdi", ...} 0
 | `SmartMonitor:InvocationTimeoutSeconds` | int | 15 | Per-disk timeout for a single smartctl call |
 | `SmartMonitor:DeviceExcludePatterns` | string[] | `[]` | Glob patterns matched against `/dev/sdN` names; matching devices are skipped |
 
+## Caching and refresh model
+
+Both collectors run their own background refresh loop and serve `/metrics` from an in-memory cache. The Prometheus scrape never triggers a hardware read directly. There are two independent caches:
+
+| Cache | Config option | Default | Lower bound |
+|---|---|---|---|
+| LibreHardwareMonitor (CPU / GPU / memory / motherboard / network / native SATA SMART / NVMe) | `HardwareMonitor:ScrapeIntervalSeconds` | **15s** | 1s |
+| smartctl (full SMART table for every disk, incl. those behind SAS HBA) | `SmartMonitor:RefreshIntervalSeconds` | **60s** | 15s |
+
+Both fire one eager refresh at service start, so the first scrape after launch already has data — no warmup gap.
+
+**Why two different defaults**
+
+- `HardwareMonitor` covers fast-changing telemetry (CPU temperature, GPU load, fan RPM). 15s matches the default Prometheus scrape interval, so client-visible staleness stays imperceptible.
+- `SmartMonitor` reads slow-changing health attributes (temperature drifts in minutes, reallocated-sectors in days). More importantly, every smartctl invocation against an idle HDD spins it back up — running it on the scrape path would prevent disks from ever sleeping. 60s is the floor where that's actually tolerable.
+
+**Effective staleness**
+
+What a Prometheus client sees is bounded by `cache_interval + scrape_interval`. With defaults:
+
+- LibreHardwareMonitor metrics: ≤ 30 s old
+- SMART metrics: ≤ 75 s old
+
+**When to retune**
+
+- Want a 1Hz dashboard: set `HardwareMonitor:ScrapeIntervalSeconds=1`. Don't touch `SmartMonitor` — 15s is already the lower bound and it'd thrash idle drives.
+- Have AHCI-attached SATA HDDs you want to actually spin down: bump `HardwareMonitor:ScrapeIntervalSeconds` to ≥ 60s. LHM's `Update()` issues `IOCTL_ATA_PASS_THROUGH SMART READ DATA` to those disks, which counts as activity for ATA `standby_timer`. (SAS-HBA-attached disks are unaffected — LHM can't read SMART through SAT, only perfmon, which doesn't wake the disk.)
+- NVMe-only host with no power concerns: defaults are fine.
+
 ## Why
 
 > windows_exporter's thermal zone data is not accurate
