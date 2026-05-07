@@ -20,6 +20,71 @@
 
 **仪表板包含：** CPU 概览、CPU 温度、CPU 功率与电压、风扇、内存、GPU（温度 / 负载 / 显存 / 功率 / 频率 / PCIe）、磁盘（温度 / 空间 / 健康度 / IO / 吞吐量）、网络（利用率 / 吞吐量 / 流量统计）。
 
+## SMART 磁盘属性
+
+LibreHardwareMonitor 无法读取挂在 SAS HBA（LSI/Avago、Adaptec 等）后面的磁盘的 SMART 数据，因为这些盘呈现为 SCSI 设备，需要 SAT（SCSI/ATA Translation）pass-through，而该库未实现这部分。为了补上这块缺口，本 exporter 内置 [`smartctl`](https://www.smartmontools.org/) 并以 `hardware_storage_smart_*` 前缀输出一组并行指标。
+
+内置的二进制位于 `<安装目录>\smartctl\`（共约 1.4 MB）。它以独立子进程方式被调用；smartmontools 是 GPLv2+，作为独立、未修改的可执行文件包含在内。完整归属信息见 `smartctl\COPYING.txt` 和 `smartctl\README.txt`。
+
+如果想用其他版本的 `smartctl.exe`（例如更新版），在 `appsettings.json` 里设置 `SmartMonitor:SmartctlPath`。要完全关闭 SMART 采集，把 `SmartMonitor:Enable` 设为 `false`。
+
+### SMART 指标示例
+
+```
+# 磁盘温度，包括挂在 SAS HBA 后面的 SATA 盘
+hardware_storage_smart_temperature_celsius{device="/dev/sda", model="WDC  WUH721816ALE6L4", serial="3HGHU16P", protocol="ata", firmware="PCGNW232"} 34
+
+# 整体健康自检（1 = 通过，0 = 失败）
+hardware_storage_smart_health_passed{device="/dev/sda", ...} 1
+
+# ATA SMART 属性表（按 id）
+hardware_storage_smart_ata_attribute_raw{device="/dev/sda", ..., id="5", name="Reallocated_Sector_Ct"} 0
+hardware_storage_smart_ata_attribute_raw{device="/dev/sda", ..., id="9", name="Power_On_Hours"} 31120
+
+# NVMe 专属
+hardware_storage_smart_nvme_percentage_used{device="/dev/sdi", model="SAMSUNG MZWLL3T2HAJQ-00005", ...} 6
+hardware_storage_smart_nvme_media_errors{device="/dev/sdi", ...} 0
+```
+
+### SMART 配置
+
+| 选项 | 类型 | 默认值 | 描述 |
+|------|------|--------|------|
+| `SmartMonitor:Enable` | bool | true | 启用 SMART 采集器 |
+| `SmartMonitor:SmartctlPath` | string | `""` | 覆盖 smartctl.exe 路径（留空使用内置） |
+| `SmartMonitor:RefreshIntervalSeconds` | int | 60 | 多久重新轮询 smartctl 一次。刷新是异步的；`/metrics` 始终返回最近一次缓存的快照，所以 Prometheus scrape 延迟不受影响。注意：读取 SMART 会唤醒 idle 的 HDD，不要设得太激进。 |
+| `SmartMonitor:InvocationTimeoutSeconds` | int | 15 | 单次 smartctl 调用的每盘超时 |
+| `SmartMonitor:DeviceExcludePatterns` | string[] | `[]` | 用于匹配 `/dev/sdN` 名称的 glob 模式，匹配到的设备会被跳过 |
+
+## 缓存与刷新模型
+
+两个采集器都跑各自的后台刷新循环，`/metrics` 从内存缓存中取数据。Prometheus scrape **从来不会**直接触发硬件读取。一共两个独立缓存：
+
+| 缓存 | 配置项 | 默认值 | 下限 |
+|---|---|---|---|
+| LibreHardwareMonitor（CPU / GPU / 内存 / 主板 / 网卡 / 直连 SATA SMART / NVMe） | `HardwareMonitor:ScrapeIntervalSeconds` | **15s** | 1s |
+| smartctl（每块盘的完整 SMART 表，含 SAS HBA 后面的盘） | `SmartMonitor:RefreshIntervalSeconds` | **60s** | 15s |
+
+服务启动时两个都会立刻刷一次，所以服务起来后第一次 scrape 就有数据，没有冷启动空洞。
+
+**为什么默认值不一样**
+
+- `HardwareMonitor` 覆盖快变指标（CPU 温度、GPU 负载、风扇转速）。15s 与 Prometheus 默认 scrape 间隔同步，客户端看到的延迟可忽略。
+- `SmartMonitor` 读慢变健康属性（温度按分钟级漂移，reallocated_sectors 按天级变）。更关键的是，**每次** smartctl 调到 idle 的 HDD 都会让它重新 spin up——把它放到 scrape 路径上等于让盘永远睡不着。60s 是真正能让盘休眠的实际下限。
+
+**有效陈旧度**
+
+Prometheus 客户端看到的某个指标最多旧 `cache_interval + scrape_interval`。默认值下：
+
+- LibreHardwareMonitor 指标：≤ 30 秒
+- SMART 指标：≤ 75 秒
+
+**什么时候要调参**
+
+- 想要 1Hz 实时仪表：`HardwareMonitor:ScrapeIntervalSeconds=1`。**别动** `SmartMonitor`——15s 已经是下限，再低就直接搅乱 idle 盘。
+- 你的 AHCI 直连 SATA HDD 想真睡下来：把 `HardwareMonitor:ScrapeIntervalSeconds` 提到 ≥ 60s。LHM 的 `Update()` 会对这些盘下 `IOCTL_ATA_PASS_THROUGH SMART READ DATA`，对 ATA `standby_timer` 而言这就是活动。（SAS HBA 后面的盘不受影响——LHM 走不通 SAT 这条路，只读 perfmon，不会唤盘。）
+- 全 NVMe 主机、不在意省电：默认值即可。
+
 ## 为什么需要这个项目
 
 > windows_exporter 的温度区域数据不够准确
@@ -115,7 +180,7 @@ Start-Service -Name "HardwareExporter"
 | `EnableController` | bool | true | 监控控制器指标 |
 | `EnableNetwork` | bool | true | 监控网络指标 |
 | `EnableStorage` | bool | true | 监控存储指标 |
-| `ScrapeIntervalSeconds` | int | 15 | 更新间隔（暂未使用） |
+| `ScrapeIntervalSeconds` | int | 15 | 后台循环调用硬件 `Update()` 的频率。`/metrics` 始终返回最近一次缓存的快照，所以这个参数控制硬件轮询频率而非 Prometheus scrape 延迟。值越小数据越新；值越大 idle 的 AHCI HDD 才有机会休眠（每次 `Update()` 都会对那些盘下 ATA SMART pass-through）。 |
 
 ## Prometheus 配置
 
