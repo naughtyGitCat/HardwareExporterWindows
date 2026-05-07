@@ -22,7 +22,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="smartctl\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+		<!--
+			smartctl.exe must NOT be bundled into HardwareExporterWindows.exe by
+			PublishSingleFile, otherwise we can't shell out to it. ExcludeFromSingleFile
+			keeps each file alongside the host exe, mirroring the dev (Debug) layout.
+		-->
+		<None Include="smartctl\**"
+		      CopyToOutputDirectory="PreserveNewest"
+		      CopyToPublishDirectory="PreserveNewest"
+		      ExcludeFromSingleFile="true" />
 	</ItemGroup>
 
 </Project>
