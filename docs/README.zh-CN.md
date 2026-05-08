@@ -254,8 +254,17 @@ scrape_configs:
 
 ### 硬件指标格式
 
+LHM 来源的指标会原样保留 LHM 的 SensorType,使用 LHM 自带单位(详见下方"指标类型"表):
+
 ```
 hardware_{类型}_{传感器类型}_{传感器名称}{标签} 值
+```
+
+此外,对带单位的传感器类型(`Throughput`、`Data`、`SmallData`),exporter 会**并行**输出一份符合 Prometheus 命名约定的别名,值已归一为 SI 基础单位。新建 dashboard 优先用这个别名——不用每个 panel 配单位、也避开了 GB 整数精度让 `rate(hardware_storage_data_*[5m])` 失真的坑。
+
+```
+hardware_{类型}_{传感器名称}_bytes_per_second{标签} 值   # Throughput
+hardware_{类型}_{传感器名称}_bytes{标签} 值              # Data, SmallData
 ```
 
 ### 指标示例
@@ -267,23 +276,39 @@ hardware_cpu_temperature_core{name="AMD Ryzen 9 5900X", core="0"} 45.0
 # GPU 使用率
 hardware_gpu_load_core{name="NVIDIA GeForce RTX 3080", vendor="nvidia"} 75.5
 
-# 内存使用率
-hardware_memory_load_memory{name="Generic Memory"} 45.2
+# 内存使用(旧名,GB)
+hardware_memory_data_memory_used{name="Generic Memory"} 18.655
+# 同样的值,新别名(bytes)
+hardware_memory_used_bytes{name="Generic Memory"} 18655895233
 
 # 风扇转速
 hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
+
+# 磁盘吞吐量(旧名,B/s——注意不是 MB/s,文档曾经写错)
+hardware_storage_throughput_write_rate{name="KIOXIA-EXCERIA SSD"} 153991
+# 同样的值,新别名
+hardware_storage_write_rate_bytes_per_second{name="KIOXIA-EXCERIA SSD"} 153991
+
+# 累计写入(旧名,GB 累计——不是速率)
+hardware_storage_data_written{name="SAMSUNG MZWLL3T2HAJQ"} 4608505
+# 同样的值,新别名(bytes 累计;可以放心用 rate())
+hardware_storage_data_written_bytes{name="SAMSUNG MZWLL3T2HAJQ"} 4608505000000000
 ```
 
 ### 指标类型
 
-- `temperature` - 温度（摄氏度）
-- `load` - 负载百分比（0-100）
-- `clock` - 时钟频率（MHz）
-- `power` - 功耗（瓦特）
-- `fan` - 风扇转速（RPM）
-- `voltage` - 电压（伏特）
-- `data` - 数据速率（GB/s）
-- `throughput` - 吞吐量（MB/s）
+| LHM SensorType | 旧名(在 `hardware_*_<sensor_type>_*` 里)的单位 | 新别名后缀 | 别名值 |
+|---|---|---|---|
+| `Temperature` | °C | _ | _ |
+| `Load` | percent (0-100) | _ | _ |
+| `Clock` | MHz | _ | _ |
+| `Power` | W | _ | _ |
+| `Fan` | RPM | _ | _ |
+| `Voltage` | V | _ | _ |
+| `Throughput` | **B/s**(早先文档写的 MB/s 是错的) | `_bytes_per_second` | 与旧值相同(本来就是 B/s) |
+| `Data` | **GB 累计值**(不是 GB/s) | `_bytes` | 旧值 × 1e9 |
+| `SmallData` | MB 累计值 | `_bytes` | 旧值 × 1e6 |
+| `Energy` | mWh | _ | _ |
 
 ## 故障排查
 

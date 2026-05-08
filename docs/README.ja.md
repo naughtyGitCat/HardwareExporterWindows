@@ -254,8 +254,17 @@ scrape_configs:
 
 ### ハードウェアメトリクス形式
 
+LHM 由来のメトリクスは LHM の SensorType をそのまま保ち、LHM ネイティブの単位を使用します（下の「メトリクスタイプ」表を参照）：
+
 ```
 hardware_{タイプ}_{センサータイプ}_{センサー名}{ラベル} 値
+```
+
+加えて、単位を持つセンサータイプ（`Throughput`、`Data`、`SmallData`）については、Prometheus 規約に沿った別名を**並行で**出力し、値は SI 基本単位に正規化されます。新しいダッシュボードではこちらを優先してください——パネルごとの単位調整が不要で、`rate(hardware_storage_data_*[5m])` を不安定にする GB 量子化問題も回避できます。
+
+```
+hardware_{タイプ}_{センサー名}_bytes_per_second{ラベル} 値   # Throughput
+hardware_{タイプ}_{センサー名}_bytes{ラベル} 値              # Data, SmallData
 ```
 
 ### メトリクス例
@@ -267,23 +276,39 @@ hardware_cpu_temperature_core{name="AMD Ryzen 9 5900X", core="0"} 45.0
 # GPU 使用率
 hardware_gpu_load_core{name="NVIDIA GeForce RTX 3080", vendor="nvidia"} 75.5
 
-# メモリ使用率
-hardware_memory_load_memory{name="Generic Memory"} 45.2
+# メモリ使用量（レガシー、GB）
+hardware_memory_data_memory_used{name="Generic Memory"} 18.655
+# 同じ値、規約準拠の別名（bytes）
+hardware_memory_used_bytes{name="Generic Memory"} 18655895233
 
 # ファン速度
 hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
+
+# ディスクスループット（レガシー、B/s——注：MB/s ではない、過去のドキュメントに誤りあり）
+hardware_storage_throughput_write_rate{name="KIOXIA-EXCERIA SSD"} 153991
+# 同じ値、規約準拠の別名
+hardware_storage_write_rate_bytes_per_second{name="KIOXIA-EXCERIA SSD"} 153991
+
+# 累計書き込み（レガシー、GB 累計値——レートではない）
+hardware_storage_data_written{name="SAMSUNG MZWLL3T2HAJQ"} 4608505
+# 同じ値、規約準拠の別名（bytes 累計値；rate() を安全に使用可能）
+hardware_storage_data_written_bytes{name="SAMSUNG MZWLL3T2HAJQ"} 4608505000000000
 ```
 
 ### メトリクスタイプ
 
-- `temperature` - 温度（摂氏）
-- `load` - 負荷率（0-100）
-- `clock` - クロック速度（MHz）
-- `power` - 消費電力（ワット）
-- `fan` - ファン速度（RPM）
-- `voltage` - 電圧（ボルト）
-- `data` - データレート（GB/s）
-- `throughput` - スループット（MB/s）
+| LHM SensorType | レガシー単位（`hardware_*_<sensor_type>_*` 内） | 規約準拠の別名サフィックス | 別名の値 |
+|---|---|---|---|
+| `Temperature` | °C | _ | _ |
+| `Load` | percent (0-100) | _ | _ |
+| `Clock` | MHz | _ | _ |
+| `Power` | W | _ | _ |
+| `Fan` | RPM | _ | _ |
+| `Voltage` | V | _ | _ |
+| `Throughput` | **B/s**（以前のドキュメントの MB/s は誤り） | `_bytes_per_second` | 値はそのまま（既に B/s） |
+| `Data` | **GB 累計値**（GB/s ではない） | `_bytes` | レガシー値 × 1e9 |
+| `SmallData` | MB 累計値 | `_bytes` | レガシー値 × 1e6 |
+| `Energy` | mWh | _ | _ |
 
 ## トラブルシューティング
 

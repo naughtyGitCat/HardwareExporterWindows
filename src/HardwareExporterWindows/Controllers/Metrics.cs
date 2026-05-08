@@ -256,11 +256,7 @@ public class MetricsController : ControllerBase
             .Concat(sensorLabels)
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-        // Build metric name and ensure it's fully sanitized
-        var metricName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
-        metricName = SanitizeMetricName(TrimDuplicateElements(metricName));
-
-        // Render labels
+        // Render labels (shared between legacy and conventional emissions)
         var labelsRendered = string.Empty;
         if (allLabels.Any())
         {
@@ -269,14 +265,57 @@ public class MetricsController : ControllerBase
             labelsRendered = $"{{{labelsRendered}}}";
         }
 
+        // ----- Legacy emission: <prefix>_<sensorType>_<sensorName> -----
+        // Kept for backward compatibility; existing dashboards depend on these.
+        // For Data and SmallData this carries LHM's native units (GB / MB) and
+        // for Throughput it's bytes/second — see the *_bytes / *_bytes_per_second
+        // aliases below for Prometheus-conventional, unit-normalized variants.
+        var legacyName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
+        legacyName = SanitizeMetricName(TrimDuplicateElements(legacyName));
+        EmitSensorSample(metricsBuilder, emittedMetrics, legacyName, sensor, labelsRendered, sensor.Value!.Value);
+
+        // ----- Conventional alias: <prefix>_<sensorName>{_bytes | _bytes_per_second} -----
+        // Emitted in parallel with the legacy form for sensor types that carry a
+        // unit. Values are normalized to base SI units so consumers can use them
+        // without per-panel unit fiddling.
+        var (suffix, scale) = sensor.SensorType switch
+        {
+            LibreHardwareMonitor.Hardware.SensorType.Throughput => ("_bytes_per_second", 1.0),
+            LibreHardwareMonitor.Hardware.SensorType.Data       => ("_bytes",            1e9),  // LHM Data is GB
+            LibreHardwareMonitor.Hardware.SensorType.SmallData  => ("_bytes",            1e6),  // LHM SmallData is MB
+            _ => (null, 0.0),
+        };
+        if (suffix != null)
+        {
+            var conventionalName = SanitizeMetricName(TrimDuplicateElements($"{prefix}_{sensorName}{suffix}"));
+            if (conventionalName != legacyName)
+            {
+                EmitSensorSample(metricsBuilder, emittedMetrics, conventionalName, sensor, labelsRendered, (double)sensor.Value!.Value * scale);
+            }
+        }
+    }
+
+    private static void EmitSensorSample(
+        System.Text.StringBuilder metricsBuilder,
+        HashSet<string> emittedMetrics,
+        string metricName,
+        ISensor sensor,
+        string labelsRendered,
+        double value)
+    {
         // Only emit HELP and TYPE once per metric name (Prometheus requires no duplicates)
         if (emittedMetrics.Add(metricName))
         {
             metricsBuilder.Append($"# HELP {metricName} Sensor: {sensor.Name}, Type: {sensor.SensorType}\n");
             metricsBuilder.Append($"# TYPE {metricName} gauge\n");
         }
-        // Output Prometheus format (use Unix LF instead of Windows CRLF)
-        metricsBuilder.Append($"{metricName}{labelsRendered} {sensor.Value}\n");
+        // Output Prometheus format (use Unix LF instead of Windows CRLF).
+        // InvariantCulture so e.g. comma-decimal locales don't break the format.
+        metricsBuilder.Append(metricName);
+        metricsBuilder.Append(labelsRendered);
+        metricsBuilder.Append(' ');
+        metricsBuilder.Append(value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+        metricsBuilder.Append('\n');
     }
 
     private static string EscapeLabel(string v) =>

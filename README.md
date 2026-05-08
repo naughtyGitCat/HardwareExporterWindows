@@ -254,8 +254,22 @@ All metrics are available at the `/metrics` endpoint.
 
 ### Hardware Metrics Format
 
+LHM-derived metrics carry the LHM SensorType verbatim and use LHM's native
+units (see the "Metric Types" table below):
+
 ```
 hardware_{type}_{sensor_type}_{sensor_name}{labels} value
+```
+
+In addition, for sensor types that carry a unit (`Throughput`, `Data`,
+`SmallData`), the exporter also emits a Prometheus-conventional alias with
+values normalized to base SI units. Prefer these for new dashboards — they
+need no per-panel unit fiddling and sidestep the GB-quantization that makes
+`rate(hardware_storage_data_*[5m])` unreliable.
+
+```
+hardware_{type}_{sensor_name}_bytes_per_second{labels} value   # Throughput
+hardware_{type}_{sensor_name}_bytes{labels} value              # Data, SmallData
 ```
 
 ### Example Metrics
@@ -267,23 +281,39 @@ hardware_cpu_temperature_core{name="AMD Ryzen 9 5900X", core="0"} 45.0
 # GPU Usage
 hardware_gpu_load_core{name="NVIDIA GeForce RTX 3080", vendor="nvidia"} 75.5
 
-# Memory Usage
-hardware_memory_load_memory{name="Generic Memory"} 45.2
+# Memory Usage (legacy, GB)
+hardware_memory_data_memory_used{name="Generic Memory"} 18.655
+# Same value, conventional alias (bytes)
+hardware_memory_used_bytes{name="Generic Memory"} 18655895233
 
 # Fan Speed
 hardware_motherboard_fan_fan{name="ASUS ROG STRIX B550-F", fan="1"} 1200
+
+# Disk throughput (legacy, B/s — note: NOT MB/s, was a doc bug)
+hardware_storage_throughput_write_rate{name="KIOXIA-EXCERIA SSD"} 153991
+# Same value, conventional alias
+hardware_storage_write_rate_bytes_per_second{name="KIOXIA-EXCERIA SSD"} 153991
+
+# Lifetime data written (legacy, GB cumulative — NOT a rate)
+hardware_storage_data_written{name="SAMSUNG MZWLL3T2HAJQ"} 4608505
+# Same value, conventional alias (bytes cumulative; safe to use rate())
+hardware_storage_data_written_bytes{name="SAMSUNG MZWLL3T2HAJQ"} 4608505000000000
 ```
 
 ### Metric Types
 
-- `temperature` - Temperature in Celsius
-- `load` - Load percentage (0-100)
-- `clock` - Clock speed in MHz
-- `power` - Power consumption in Watts
-- `fan` - Fan speed in RPM
-- `voltage` - Voltage in Volts
-- `data` - Data rate in GB/s
-- `throughput` - Throughput in MB/s
+| LHM SensorType | Legacy unit (in `hardware_*_<sensor_type>_*`) | Conventional alias suffix | Alias value |
+|---|---|---|---|
+| `Temperature` | °C | _ | _ |
+| `Load` | percent (0-100) | _ | _ |
+| `Clock` | MHz | _ | _ |
+| `Power` | W | _ | _ |
+| `Fan` | RPM | _ | _ |
+| `Voltage` | V | _ | _ |
+| `Throughput` | **B/s** (not MB/s — earlier docs were wrong) | `_bytes_per_second` | same value (already B/s) |
+| `Data` | **GB cumulative** (not GB/s) | `_bytes` | legacy × 1e9 |
+| `SmallData` | MB cumulative | `_bytes` | legacy × 1e6 |
+| `Energy` | mWh | _ | _ |
 
 ## Troubleshooting
 
