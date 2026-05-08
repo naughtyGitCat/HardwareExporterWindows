@@ -40,12 +40,19 @@ jobs:
     
     - name: Publish HardwareExporterWindows
       run: |
+          # Sync the .exe's AssemblyVersion / FileVersion / ProductVersion with the
+          # MSI's ProductVersion. Windows Installer's default REINSTALLMODE skips
+          # files whose FileVersion is unchanged, so without this the new MSI
+          # would leave the old HardwareExporterWindows.exe in place even though
+          # the registry shows a fresh ProductCode.
+          $assemblyVersion = "1.0.${{ github.run_number }}.0"
           dotnet publish src/HardwareExporterWindows/HardwareExporterWindows.csproj `
             -c Release `
             -r win-x64 `
             --self-contained true `
             -p:PublishSingleFile=true `
             -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:Version=$assemblyVersion `
             -o bin/publish/HardwareExporterWindows
     
     - name: Publish HardwareExporterWeb
