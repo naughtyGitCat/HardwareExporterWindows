@@ -20,6 +20,37 @@ A ready-to-use Grafana dashboard is included at [`docs/grafana-dashboard.json`](
 
 **Dashboard sections:** CPU Overview, CPU Temperature, CPU Power & Voltage, Fans, Memory, GPU (Temperature / Load / VRAM / Power / Clock / PCIe), Disk (Temperature / Space / Health / IO / Throughput), Network (Utilization / Throughput / Data Transferred).
 
+## Upcoming breaking change: legacy LHM metric names will be removed ≥ 2026-08-15
+
+Until ee6b1c2 (2026-05-08), LHM-derived metrics were emitted as
+`hardware_<type>_<sensor_type>_<name>` carrying LHM's native units (GB for
+`Data`, MB for `SmallData`, B/s for `Throughput`). That naming was
+unit-implicit and the Data variant being GB-quantized integer made
+`rate(hardware_storage_data_*[5m])` return 0 over short windows.
+
+The exporter now emits Prometheus-conventional aliases in parallel with
+the legacy form: `*_bytes_per_second` for Throughput sensors and `*_bytes`
+for Data / SmallData sensors, with values normalized to base SI units.
+**The legacy form will be removed in a release tagged on or after
+2026-08-15.** See [CHANGELOG.md](CHANGELOG.md) for the full mapping table.
+
+To prepare:
+
+1. Re-import [`docs/grafana-dashboard.json`](docs/grafana-dashboard.json) —
+   it was migrated to aliases on 2026-05-08.
+2. Audit custom dashboards / alert rules:
+   ```promql
+   {__name__=~"hardware_(storage|memory|network|gpu)_(throughput|data)_.*"}
+   ```
+   Anything returned is on a name that will go away.
+3. Set `HardwareMonitor:EmitLegacyMetricNames` to `false` in `appsettings.json`
+   to preview the post-removal `/metrics` output without actually removing
+   anything yet.
+
+Sensors without a unit (temperature, fan, voltage, power, clock, load,
+level, factor) are unaffected — their legacy form is the only form, and
+the `EmitLegacyMetricNames` flag does not silence them.
+
 ## SMART (S.M.A.R.T. disk attributes)
 
 LibreHardwareMonitor cannot read SMART data from disks attached behind SAS HBAs (LSI/Avago, Adaptec, etc.) because those disks appear as SCSI devices and require SAT (SCSI/ATA Translation) pass-through that the library does not implement. To cover that gap, this exporter bundles [`smartctl`](https://www.smartmontools.org/) and emits a parallel set of metrics under the `hardware_storage_smart_*` prefix.

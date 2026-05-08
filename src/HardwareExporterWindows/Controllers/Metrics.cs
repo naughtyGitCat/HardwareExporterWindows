@@ -1,7 +1,9 @@
 using LibreHardwareMonitor.Hardware;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using HardwareExporterWindows.Configuration;
 using HardwareExporterWindows.Services;
 
 namespace HardwareExporterWindows.Controllers;
@@ -13,15 +15,18 @@ public class MetricsController : ControllerBase
     private readonly ILogger<MetricsController> _logger;
     private readonly HardwareMonitorService _hardwareMonitor;
     private readonly SmartMonitorService _smartMonitor;
+    private readonly HardwareMonitorOptions _hardwareMonitorOptions;
 
     public MetricsController(
         ILogger<MetricsController> logger,
         HardwareMonitorService hardwareMonitor,
-        SmartMonitorService smartMonitor)
+        SmartMonitorService smartMonitor,
+        IOptions<HardwareMonitorOptions> hardwareMonitorOptions)
     {
         _logger = logger;
         _hardwareMonitor = hardwareMonitor;
         _smartMonitor = smartMonitor;
+        _hardwareMonitorOptions = hardwareMonitorOptions.Value;
     }
 
     /// <summary>
@@ -265,19 +270,18 @@ public class MetricsController : ControllerBase
             labelsRendered = $"{{{labelsRendered}}}";
         }
 
-        // ----- Legacy emission: <prefix>_<sensorType>_<sensorName> -----
-        // Kept for backward compatibility; existing dashboards depend on these.
+        // Legacy form: <prefix>_<sensorType>_<sensorName>.
         // For Data and SmallData this carries LHM's native units (GB / MB) and
-        // for Throughput it's bytes/second — see the *_bytes / *_bytes_per_second
-        // aliases below for Prometheus-conventional, unit-normalized variants.
-        var legacyName = $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}";
-        legacyName = SanitizeMetricName(TrimDuplicateElements(legacyName));
-        EmitSensorSample(metricsBuilder, emittedMetrics, legacyName, sensor, labelsRendered, sensor.Value!.Value);
+        // for Throughput it's bytes/second; the *_bytes / *_bytes_per_second
+        // alias below normalizes those to base SI units.
+        //
+        // SLATED FOR REMOVAL ≥ 2026-08-15 (see CHANGELOG.md). Operators can
+        // preview post-removal /metrics by setting
+        // HardwareMonitor:EmitLegacyMetricNames=false.
+        var legacyName = SanitizeMetricName(TrimDuplicateElements(
+            $"{prefix}_{sensor.SensorType.ToString().ToLower()}_{sensorName}"));
 
-        // ----- Conventional alias: <prefix>_<sensorName>{_bytes | _bytes_per_second} -----
-        // Emitted in parallel with the legacy form for sensor types that carry a
-        // unit. Values are normalized to base SI units so consumers can use them
-        // without per-panel unit fiddling.
+        // Conventional alias spec for unit-bearing sensor types only.
         var (suffix, scale) = sensor.SensorType switch
         {
             LibreHardwareMonitor.Hardware.SensorType.Throughput => ("_bytes_per_second", 1.0),
@@ -285,7 +289,18 @@ public class MetricsController : ControllerBase
             LibreHardwareMonitor.Hardware.SensorType.SmallData  => ("_bytes",            1e6),  // LHM SmallData is MB
             _ => (null, 0.0),
         };
-        if (suffix != null)
+        var hasAlias = suffix != null;
+
+        // Emit legacy unless the operator explicitly opted out AND we have an alias
+        // to keep this sensor visible. Sensors without an alias (temperature, fan,
+        // voltage, …) always emit the legacy form regardless of the toggle —
+        // EmitLegacyMetricNames=false must not silently drop those.
+        if (_hardwareMonitorOptions.EmitLegacyMetricNames || !hasAlias)
+        {
+            EmitSensorSample(metricsBuilder, emittedMetrics, legacyName, sensor, labelsRendered, sensor.Value!.Value);
+        }
+
+        if (hasAlias)
         {
             var conventionalName = SanitizeMetricName(TrimDuplicateElements($"{prefix}_{sensorName}{suffix}"));
             if (conventionalName != legacyName)

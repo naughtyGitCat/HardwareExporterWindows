@@ -20,6 +20,24 @@
 
 **仪表板包含：** CPU 概览、CPU 温度、CPU 功率与电压、风扇、内存、GPU（温度 / 负载 / 显存 / 功率 / 频率 / PCIe）、磁盘（温度 / 空间 / 健康度 / IO / 吞吐量）、网络（利用率 / 吞吐量 / 流量统计）。
 
+## 即将到来的 Breaking Change:LHM 旧 metric 名将于 2026-08-15 之后移除
+
+直到 ee6b1c2(2026-05-08)之前,LHM 来源的指标都按 `hardware_<type>_<sensor_type>_<name>` 命名,带 LHM 自带单位(`Data` 是 GB、`SmallData` 是 MB、`Throughput` 是 B/s)。这套命名单位不显式,而且 Data 是 GB 整数精度,导致 `rate(hardware_storage_data_*[5m])` 在短窗口下返回 0。
+
+现在 exporter 会**并行**输出符合 Prometheus 命名约定的别名:Throughput 走 `*_bytes_per_second`、Data/SmallData 走 `*_bytes`,值已归一为 SI 基础单位。**旧名将在 2026-08-15 之后的某个 release 被删掉**。完整对照表见 [CHANGELOG.md](CHANGELOG.md)。
+
+迁移步骤:
+
+1. 重新 import [`docs/grafana-dashboard.json`](grafana-dashboard.json),这份 dashboard 已经在 2026-05-08 切到别名了。
+2. 审查自定义 dashboard / 告警规则:
+   ```promql
+   {__name__=~"hardware_(storage|memory|network|gpu)_(throughput|data)_.*"}
+   ```
+   返回的所有 series 都在用即将消失的名字。
+3. 在 `appsettings.json` 把 `HardwareMonitor:EmitLegacyMetricNames` 设成 `false`,可以提前看一眼"删除之后的 /metrics 长什么样"——如果你关心的指标因此消失,说明上面某步漏了。
+
+不带单位的传感器(温度、风扇、电压、功率、时钟、load、level、factor)不受影响——它们一直就只有那一种命名,`EmitLegacyMetricNames=false` 不会把它们一起静音。
+
 ## SMART 磁盘属性
 
 LibreHardwareMonitor 无法读取挂在 SAS HBA（LSI/Avago、Adaptec 等）后面的磁盘的 SMART 数据，因为这些盘呈现为 SCSI 设备，需要 SAT（SCSI/ATA Translation）pass-through，而该库未实现这部分。为了补上这块缺口，本 exporter 内置 [`smartctl`](https://www.smartmontools.org/) 并以 `hardware_storage_smart_*` 前缀输出一组并行指标。
